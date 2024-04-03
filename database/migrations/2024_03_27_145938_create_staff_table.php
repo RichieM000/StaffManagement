@@ -21,8 +21,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('phone')->nullable();
             $table->string('jobrole')->nullable();
-            $table->unsignedBigInteger('assigned_task_id')->nullable();
-            $table->foreign('assigned_task_id')->references('id')->on('tasks')->onDelete('set null');
+           
             $table->timestamps();
         });
     

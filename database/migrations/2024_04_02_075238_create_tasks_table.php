@@ -17,9 +17,7 @@ return new class extends Migration
         $table->text('description')->nullable();
         $table->dateTime('deadline')->nullable();
         $table->boolean('completed')->default(false);
-        $table->unsignedBigInteger('assigned_to')->nullable();
-        $table->foreign('assigned_to')->references('id')->on('staff')->onDelete('set null');
-        $table->string('jobrole')->nullable();
+        $table->string('jobrole')->default('');
         $table->timestamps();
     });
 }

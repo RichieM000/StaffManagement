@@ -53,14 +53,14 @@
                     <div class="mb-4">
                         <label for="jobrole" class="block text-sm font-medium text-gray-700">Job Role</label>
                         <select name="jobrole" id="jobrole" class="mt-1 p-2 border overflow-y-auto border-gray-300 rounded-md w-full" required>
-                            <option value="Kapitan">Kapitan</option>
-                            <option value="Vice Kap">Vice Kap</option>
+                            <option value="Chairman">Chairman</option>
                             <option value="Secretary">Secretary</option>
                             <option value="Treasurer">Treasurer</option>
-                            <option value="Chairman">Chairman</option>
                             <option value="Kagawad">Kagawad</option>
                             <option value="Tanod">Tanod</option>
+                            <option value="SKchairman">SK Chairman</option>
                             <option value="SK">SK</option>
+                            <option value="BHW">Barangay Health Workers</option>
                         </select>
                     </div>
                     <!-- Other staff fields (age, address, email, phone) can be added similarly -->

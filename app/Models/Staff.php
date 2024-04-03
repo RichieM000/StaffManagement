@@ -51,5 +51,12 @@ class Staff extends Model implements Sortable
         return $this->belongsTo(Task::class, 'assigned_task_id');
     }
 
-   
+    // public function tasks()
+    // {
+    //     return $this->belongsToMany(Task::class);
+    // }
+    public function tasks()
+{
+    return $this->belongsToMany(Task::class, 'staff_task');
+}
 }

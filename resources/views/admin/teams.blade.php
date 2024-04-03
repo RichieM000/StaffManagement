@@ -57,22 +57,22 @@
                     <table class="w-full table-auto">
                         <thead>
                             <tr class="bg-gray-200 text-gray-700 uppercase text-sm font-medium leading-normal">
-                                <th class="px-4 py-2 whitespace-nowrap">
-                                Kapitan</th>
-                                <th class="px-4 py-2 whitespace-nowrap">Vice Kap</th>
-                                <th class="px-4 py-2 whitespace-nowrap">Secretary</th>
+                            
                                 <th class="px-4 py-2 whitespace-nowrap">Chairman</th>
+                                <th class="px-4 py-2 whitespace-nowrap">Secretary</th>
                                 <th class="px-4 py-2 whitespace-nowrap">Treasurer</th>
                                 <th class="px-4 py-2 whitespace-nowrap">Kagawad</th>
                                 <th class="px-4 py-2 whitespace-nowrap">Tanod</th>
+                                <th class="px-4 py-2 whitespace-nowrap">SK Chairman</th>
                                 <th class="px-4 py-2 whitespace-nowrap">SK</th>
+                                <th class="px-4 py-2 whitespace-nowrap">Barangay Health Workers</th>
                             </tr>
                         </thead>
                         <tbody class="text-gray-600 text-sm font-light">
                             <tr class="transition text-center duration-300 ease-in-out hover:bg-gray-100">
                                 <td class="">
                                     @foreach($staffData as $staff)
-                                        @if($staff->jobrole == "Kapitan")
+                                        @if($staff->jobrole == "Chairman")
                                       
                                             {{$staff->firstname}} {{$staff->lastname}}<br><br>
                                        
@@ -81,7 +81,7 @@
                                 </td>
                                 <td class="">
                                     @foreach($staffData as $staff)
-                                        @if($staff->jobrole == "Vice Kap")
+                                        @if($staff->jobrole == "Secretary")
                                     
                                             {{$staff->firstname}} {{$staff->lastname}}<br><br>
                                        
@@ -89,20 +89,6 @@
                                     @endforeach
                                 </td>
                                
-                                <td class="">
-                                    @foreach($staffData as $staff)
-                                        @if($staff->jobrole == "Secretary")
-                                            {{$staff->firstname}} {{$staff->lastname}}<br><br>
-                                        @endif
-                                    @endforeach
-                                </td>
-                                <td class="">
-                                    @foreach($staffData as $staff)
-                                        @if($staff->jobrole == "Chairman")
-                                            {{$staff->firstname}} {{$staff->lastname}}<br><br>
-                                        @endif
-                                    @endforeach
-                                </td>
                                 <td class="">
                                     @foreach($staffData as $staff)
                                         @if($staff->jobrole == "Treasurer")
@@ -126,7 +112,21 @@
                                 </td>
                                 <td class="">
                                     @foreach($staffData as $staff)
+                                        @if($staff->jobrole == "SKchairman")
+                                            {{$staff->firstname}} {{$staff->lastname}}<br><br>
+                                        @endif
+                                    @endforeach
+                                </td>
+                                <td class="">
+                                    @foreach($staffData as $staff)
                                         @if($staff->jobrole == "SK")
+                                            {{$staff->firstname}} {{$staff->lastname}}<br><br>
+                                        @endif
+                                    @endforeach
+                                </td>
+                                <td class="">
+                                    @foreach($staffData as $staff)
+                                        @if($staff->jobrole == "BHW")
                                             {{$staff->firstname}} {{$staff->lastname}}<br><br>
                                         @endif
                                     @endforeach

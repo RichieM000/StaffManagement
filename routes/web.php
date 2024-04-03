@@ -41,21 +41,8 @@ Route::get('admin/teams', [TeamController::class, 'index'])->name('admin.teams')
 
 // handling task
 Route::get('admin/task', [TaskController::class, 'index'])->name('admin.task');
-// Route::get('/tasks/create', [TaskController::class, 'create'])->name('tasks.create');
-// Route::post('/tasks', [TaskController::class, 'store'])->name('tasks.store');
-Route::get('/tasks/{task}', [TaskController::class, 'show'])->name('tasks.show');
-// Route::get('/tasks/{task}/edit', [TaskController::class, 'edit'])->name('tasks.edit');
-// Route::put('/tasks/{task}', [TaskController::class, 'update'])->name('tasks.update');
-Route::delete('/tasks/{task}', [TaskController::class, 'destroy'])->name('tasks.destroy');
-
-Route::post('/assign-task', [TaskController::class, 'assignTask'])->name('assign-task');
-Route::put('/tasks/{id}', [TaskController::class, 'editTask'])->name('tasks.edit');
-Route::delete('/tasks/{id}', [TaskController::class, 'destroy'])->name('tasks.destroy');
-Route::post('/tasks', [TaskController::class, 'store'])->name('tasks.store');
-Route::get('/tasks/show', [TaskController::class, 'showTaskPage'])->name('tasks.show');
-
-
-
+Route::get('admin/add-task', [TaskController::class, 'create'])->name('add-task');
+Route::post('/tasks', [TaskController::class, 'store'])->name('tasks-store');
 
 
 
