@@ -74,7 +74,7 @@
                                     @foreach($staffData as $staff)
                                         @if($staff->jobrole == "Chairman")
                                       
-                                            {{$staff->firstname}} {{$staff->lastname}}<br><br>
+                                            {{$staff->fname}} {{$staff->lname}}<br><br>
                                        
                                         @endif
                                     @endforeach
@@ -83,7 +83,7 @@
                                     @foreach($staffData as $staff)
                                         @if($staff->jobrole == "Secretary")
                                     
-                                            {{$staff->firstname}} {{$staff->lastname}}<br><br>
+                                            {{$staff->fname}} {{$staff->lname}}<br><br>
                                        
                                         @endif
                                     @endforeach
@@ -92,42 +92,42 @@
                                 <td class="">
                                     @foreach($staffData as $staff)
                                         @if($staff->jobrole == "Treasurer")
-                                            {{$staff->firstname}} {{$staff->lastname}}<br><br>
+                                            {{$staff->fname}} {{$staff->lname}}<br><br>
                                         @endif
                                     @endforeach
                                 </td>
                                 <td class="">
                                     @foreach($staffData as $staff)
                                         @if($staff->jobrole == "Kagawad")
-                                            {{$staff->firstname}} {{$staff->lastname}}<br><br>
+                                            {{$staff->fname}} {{$staff->lname}}<br><br>
                                         @endif
                                     @endforeach
                                 </td>
                                 <td class="">
                                     @foreach($staffData as $staff)
                                         @if($staff->jobrole == "Tanod")
-                                            {{$staff->firstname}} {{$staff->lastname}}<br><br>
+                                            {{$staff->fname}} {{$staff->lname}}<br><br>
                                         @endif
                                     @endforeach
                                 </td>
                                 <td class="">
                                     @foreach($staffData as $staff)
                                         @if($staff->jobrole == "SKchairman")
-                                            {{$staff->firstname}} {{$staff->lastname}}<br><br>
+                                            {{$staff->fname}} {{$staff->lname}}<br><br>
                                         @endif
                                     @endforeach
                                 </td>
                                 <td class="">
                                     @foreach($staffData as $staff)
                                         @if($staff->jobrole == "SK")
-                                            {{$staff->firstname}} {{$staff->lastname}}<br><br>
+                                            {{$staff->fname}} {{$staff->lname}}<br><br>
                                         @endif
                                     @endforeach
                                 </td>
                                 <td class="">
                                     @foreach($staffData as $staff)
                                         @if($staff->jobrole == "BHW")
-                                            {{$staff->firstname}} {{$staff->lastname}}<br><br>
+                                            {{$staff->fname}} {{$staff->lname}}<br><br>
                                         @endif
                                     @endforeach
                                 </td>

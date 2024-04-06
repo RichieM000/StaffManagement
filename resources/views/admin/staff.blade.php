@@ -98,10 +98,10 @@
                                     @if($noItemsMessage)
                                     <p>{{ $noItemsMessage }}</p>
                                     @else
-                                    @foreach($staff as $staffMember)
+                                    @foreach($user as $staffMember)
                                     <tr class="border-b border-gray-200 transition duration-300 ease-in-out text-center hover:bg-gray-100">
-                                        <td class="px-4 py-2 whitespace-nowrap">{{ $staffMember->firstname }}</td>
-                                        <td class="px-4 py-2 whitespace-nowrap">{{ $staffMember->lastname }}</td>
+                                        <td class="px-4 py-2 whitespace-nowrap">{{ $staffMember->fname }}</td>
+                                        <td class="px-4 py-2 whitespace-nowrap">{{ $staffMember->lname }}</td>
                                         <td class="px-4 py-2 whitespace-nowrap">{{ $staffMember->gender }}</td>
                                         <td class="px-4 py-2 whitespace-nowrap">{{ $staffMember->age }}</td>
                                         <td class="px-4 py-2 whitespace-nowrap">{{ $staffMember->address }}</td>
@@ -135,7 +135,7 @@
                     </div>
                     <!-- Pagination links -->
                     <div class="mt-4">
-                        {{ $staff->appends(['order_by' => $orderBy])->links() }}
+                        {{ $user->appends(['order_by' => $orderBy])->links() }}
 
                     </div>
                 </div>

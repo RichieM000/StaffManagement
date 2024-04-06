@@ -9,19 +9,31 @@ class Task extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'description', 'deadline', 'completed', 'jobrole'];
+    protected $fillable = ['title', 'description', 'deadline', 'completed', 'jobrole', 'assigned_to'];
+    protected $dates = ['deadline'];
 
     public function assignedTo()
     {
-        return $this->belongsTo(Staff::class, 'assigned_to');
+        return $this->belongsTo(User::class, 'assigned_to');
     }
-    public function staff()
+
+    public function jobRoles()
+    {
+        return explode(',', $this->jobrole);
+    }
+
+//     public function pendingTasks()
+// {
+//     $tasks = Task::where('status', 'pending')->latest()->get();
+
+//     return view('admin.tasks.pending', compact('tasks'));
+// }
+
+    public function users()
 {
-    return $this->belongsToMany(Staff::class, 'staff_task');
-}
-public function jobRoles()
-{
-    return explode(',', $this->jobrole);
+    return $this->belongsToMany(User::class, 'staff_task');
 }
 }
+
+
 

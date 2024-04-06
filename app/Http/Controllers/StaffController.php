@@ -16,22 +16,23 @@ class StaffController extends Controller
     $searchQuery = $request->input('search');
 
     // Perform the search query
-    $staff = Staff::query()
+    $user = User::query()
+    ->where('usertype', '!=', 'admin')
         ->when($searchQuery, function ($query) use ($searchQuery) {
-            return $query->where('firstname', 'like', "%{$searchQuery}%")
-                ->orWhere('lastname', 'like', "%{$searchQuery}%");
+            return $query->where('fname', 'like', "%{$searchQuery}%")
+                ->orWhere('lname', 'like', "%{$searchQuery}%");
         })
-        ->orderBy('firstname', $orderBy)
+        ->orderBy('fname', $orderBy)
         ->paginate(10)
         ->withQueryString();
 
-    if ($searchQuery && $staff->isEmpty()) {
+    if ($searchQuery && $user->isEmpty()) {
         $noItemsMessage = 'No items found!!';
     } else {
         $noItemsMessage = null;
     }
 
-    return view('admin.staff', compact('staff', 'orderBy', 'noItemsMessage', 'searchQuery'));
+    return view('admin.staff', compact('user', 'orderBy', 'noItemsMessage', 'searchQuery'));
 }
 
 
@@ -49,8 +50,8 @@ class StaffController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'firstname' => 'required|string|max:255',
-            'lastname' => 'required|string|max:255',
+            'fname' => 'required|string|max:255',
+            'lname' => 'required|string|max:255',
             'age' => 'required|string|max:3',
             'gender' => 'required|string|max:255',
             'address' => 'required|string|max:255',
@@ -62,11 +63,15 @@ class StaffController extends Controller
             'end_time' => 'required|string|max:8', // Add validation for end_time (adjust as needed)
         ]);
     
-        $staff = Staff::create($request->all());
+        $user = new User(); // Create a new User instance
+        $user->fill($request->except('password')); // Fill the user data except the 'password' field
+        $user->password = ''; // Set the password to an empty string or null
+    
+        $user->save(); // Save the user
     
         // Create work schedule entry for the newly created staff member
         WorkSchedule::create([
-            'staff_id' => $staff->id,
+            'user_id' => $user->id,
             'day_of_week' => $request->day_of_week, // Use input value for day_of_week
             'start_time' => $request->start_time, // Use input value for start_time
             'end_time' => $request->end_time, // Use input value for end_time
@@ -79,15 +84,15 @@ class StaffController extends Controller
 
     public function edit($id)
 {
-    $staff = Staff::with('workSchedules')->findOrFail($id);
-    return view('admin.edit-staff', compact('staff'));
+    $user = User::with('workSchedules')->findOrFail($id);
+    return view('admin.edit-staff', compact('user'));
 }
 
 public function update(Request $request, $id)
 {
     $request->validate([
-        'firstname' => 'required|string|max:255',
-        'lastname' => 'required|string|max:255',
+        'fname' => 'required|string|max:255',
+        'lname' => 'required|string|max:255',
         'age' => 'required|string|max:3',
         'gender' => 'required|string|max:255',
         'address' => 'required|string|max:255',
@@ -99,22 +104,24 @@ public function update(Request $request, $id)
         'end_time' => 'required|string|max:8',
     ]);
 
-    $staff = Staff::findOrFail($id);
-    $staff->fill($request->all());
-    $staff->save();
+    $user = User::findOrFail($id);
+    $user->fill($request->except('password')); // Exclude the 'password' field
+    $user->password = ''; // Set the password to an empty string or null
+    $user->save();
+
 
     // Update work schedule entry if needed
-    WorkSchedule::where('staff_id', $id)->update(['day_of_week' => $request->day_of_week, 'start_time' => $request->start_time, 'end_time' => $request->end_time]);
+    WorkSchedule::where('user_id', $id)->update(['day_of_week' => $request->day_of_week, 'start_time' => $request->start_time, 'end_time' => $request->end_time]);
 
     return redirect()->route('admin.staff')->with('success', 'Staff member updated successfully.');
 }
 public function destroy($id)
 {
-    $staff = Staff::findOrFail($id);
-    $staff->delete();
+    $user = Staff::findOrFail($id);
+    $user->delete();
 
     // Delete associated work schedule entry if needed
-    WorkSchedule::where('staff_id', $id)->delete();
+    WorkSchedule::where('user_id', $id)->delete();
 
     return redirect()->route('admin.staff')->with('delete', 'Staff member deleted successfully.');
 }

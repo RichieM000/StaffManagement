@@ -3,21 +3,21 @@
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
-            <p class="text-center px-4 pb-4 text-2xl font-medium">Login</p>
+            <p class="text-center px-4 pb-4 text-2xl font-medium">Admin Login</p>
 
     <form method="POST" action="{{ route('login') }}">
         @csrf
 
         <!-- Email Address -->
         <div>
-            <x-input-label for="email" :value="__('Email')" />
+            <x-input-label for="email"><i class="ri-mail-fill"></i>  {{ __('Email') }}</x-input-label>
             <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
 
         <!-- Password -->
         <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
+            <x-input-label for="email"><i class="ri-lock-fill"></i>  {{ __('Password') }}</x-input-label>
 
             <x-text-input id="password" class="block mt-1 w-full"
                             type="password"

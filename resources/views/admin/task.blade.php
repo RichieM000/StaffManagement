@@ -43,13 +43,13 @@
                         }, 3000); // Adjust the timeout value as needed (in milliseconds)
                     </script>
                     @endif
-                    {{-- <div class="flex justify-between mt-4"> --}}
-                    {{-- <form action="{{ route('admin.staff') }}" method="GET" class="mb-4">
+                    <div class="flex justify-between mt-4">
+                    <form action="{{ route('admin.task') }}" method="GET" class="mb-4">
                         <input type="text" name="search" placeholder="Search Staff..." value="{{ request()->input('search') }}" class="px-3 py-1 border border-gray-300 rounded-md">
                         <button type="submit" class="bg-blue-500 text-white px-4 ml-2 py-1 rounded-md hover:bg-hover">Search</button>
-                    </form> --}}
-{{-- 
-                    <form action="{{ route('admin.staff') }}" method="GET" class="flex items-center">
+                    </form>
+
+                    <form action="{{ route('admin.task') }}" method="GET" class="flex items-center">
                         <label for="order_by" class="mr-2">Sort by:</label>
                         <select name="order_by" id="order_by" onchange="this.form.submit()" class="mt-1 p-2 border overflow-y-auto border-gray-300 rounded-md w-16 focus:outline-none focus:ring focus:ring-blue-300">
                             <option value="asc" {{ $orderBy == 'asc' ? 'selected' : '' }}>A-Z</option>
@@ -60,13 +60,13 @@
                 </div>
                     
                     <script>
-                        function sortStaff() {
+                        function sortTask() {
                             const orderBy = document.getElementById('order_by').value;
                             const sortForm = document.getElementById('sortForm');
-                            sortForm.action = "{{ route('admin.staff') }}?order_by=" + orderBy;
+                            sortForm.action = "{{ route('admin.task') }}?order_by=" + orderBy;
                             sortForm.submit();
                         }
-                    </script> --}}
+                    </script>
 
 
         
@@ -81,7 +81,14 @@
                                         <th class="px-4 py-2 whitespace-nowrap">Description</th>
                                         <th class="px-4 py-2 whitespace-nowrap">Deadline</th>
                                         <th class="px-4 py-2 whitespace-nowrap">Departments</th>
+                                        <th class="px-4 py-2 whitespace-nowrap">Status</th>
+                                        <th class="px-4 py-2 whitespace-nowrap">Reject Reason</th>
                                         <th class="px-4 py-2 whitespace-nowrap">Completed</th>
+
+
+
+
+                                        {{-- <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th> --}}
                                         
                                         
                                         <th class="py-3 px-6 text-center whitespace-nowrap">Action</th>
@@ -95,17 +102,33 @@
                                     <tr class="border-b border-gray-200 transition duration-300 ease-in-out text-center hover:bg-gray-100">
                                         <td class="px-4 py-2 whitespace-nowrap">{{ $task->title }}</td>
                                         <td class="px-4 py-2 whitespace-nowrap">{{ $task->description }}</td>
-                                        <td class="px-4 py-2 whitespace-nowrap">{{ $task->deadline }}</td>
-                                        <td class="px-4 py-2 whitespace-nowrap">
+                                        <td class="px-4 py-2 whitespace-nowrap">{{ \Carbon\Carbon::parse($task->deadline)->format('Y-m-d') }}</td>
+                                        <td class="px-4 py-2 whitespace-wrap max-w-60">
+                                            {{-- <div class="flex flex-nowrap"> --}}
                                             @foreach($task->jobRoles() as $jobRole)
                                                 {{ $jobRole }}
                                                 @if (!$loop->last) <!-- Add comma if not the last job role -->
                                                     ,
                                                 @endif
                                             @endforeach
+                                        {{-- </div> --}}
                                         </td>
+                                        <td class="px-4 py-2 whitespace-nowrap">{{ $task->status }}</td>
+                                        <td class="px-4 py-2 whitespace-nowrap">{{ $task->rejection_reason }}</td>
+
                                         <td class="px-4 py-2 whitespace-nowrap">{{ $task->completed ? 'Yes' : 'No' }}</td>
-                                        <td class="px-4 py-2 whitespace-nowrap">asdasdsa</td>
+                                        <td class="py-3 px-6 text-center whitespace-nowrap flex justify-center gap-2">
+                                            <div>
+                                                <a class="text-xl text-button hover:text-hover" href="{{ route('tasks-edit', $task->id) }}"><i class="ri-edit-fill"></i></a>
+                                            </div>
+                                            <form action="{{ route('tasks-destroy', $task->id) }}" method="POST">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" onclick="return confirm('Are you sure you want to delete this staff member?')" class="text-red-500 text-xl hover:text-red-700"><i class="ri-delete-bin-fill"></i></button>
+                                            </form>
+
+                                        </td>
+                                       
                                         {{-- Add more columns as needed --}}
                                     </tr>
                                 @endforeach
@@ -117,7 +140,7 @@
                     </div>
                     <!-- Pagination links -->
                     <div class="mt-4">
-                        {{-- {{ $staff->appends(['order_by' => $orderBy])->links() }} --}}
+                        {{ $tasks->appends(['order_by' => $orderBy])->links() }}
 
                     </div>
                 </div>

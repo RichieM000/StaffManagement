@@ -18,12 +18,12 @@
                 <form action="{{ route('addstaff') }}" method="POST" class="grid grid-cols-2 gap-3">
                     @csrf
                     <div class="mb-4">
-                        <label for="firstname" class="block text-sm font-medium text-gray-700">First Name</label>
-                        <input type="text" name="firstname" id="firstname" class="mt-1 p-2 capitalize border border-gray-300 rounded-md w-full" required>
+                        <label for="fname" class="block text-sm font-medium text-gray-700">First Name</label>
+                        <input type="text" name="fname" id="fname" class="mt-1 p-2 capitalize border border-gray-300 rounded-md w-full" required>
                     </div>
                     <div class="mb-4">
-                        <label for="lastname" class="block text-sm font-medium text-gray-700">Last Name</label>
-                        <input type="text" name="lastname" id="lastname" class="mt-1 p-2 border capitalize border-gray-300 rounded-md w-full" required>
+                        <label for="lname" class="block text-sm font-medium text-gray-700">Last Name</label>
+                        <input type="text" name="lname" id="lname" class="mt-1 p-2 border capitalize border-gray-300 rounded-md w-full" required>
                     </div>
                     <div class="mb-4">
                         <label for="gender" class="block text-sm font-medium text-gray-700">Gender</label>

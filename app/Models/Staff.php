@@ -7,17 +7,23 @@ use Illuminate\Database\Eloquent\Model;
 use Spatie\EloquentSortable\Sortable;
 use Spatie\EloquentSortable\SortableTrait;
 
-class Staff extends Model implements Sortable
+class Staff extends User implements Sortable
 {
     use HasFactory;
     protected $table = 'staff';
-    protected $fillable = ['firstname', 'lastname', 'gender', 'age', 'address', 'jobrole', 'email', 'phone', 'assigned_task_id'];
+    protected $fillable = ['firstname', 'lastname', 'gender', 'age', 'address', 'jobrole', 'email', 'phone'];
 
     public function workSchedules()
     {
         return $this->hasMany(WorkSchedule::class);
     }
 
+    public function tasks()
+    {
+        return $this->belongsToMany(Task::class, 'staff_task');
+    }
+
+   
     public function scopeFilter($query, $filters)
     {
         if (isset($filters['search']) && $filters['search']) {
@@ -46,17 +52,14 @@ class Staff extends Model implements Sortable
        'sort_when_creating' => true,
    ];
 
-   public function assignedTask()
-    {
-        return $this->belongsTo(Task::class, 'assigned_task_id');
-    }
+//    public function assignedTask()
+//     {
+//         return $this->belongsTo(Task::class, 'assigned_task_id');
+//     }
 
     // public function tasks()
     // {
     //     return $this->belongsToMany(Task::class);
     // }
-    public function tasks()
-{
-    return $this->belongsToMany(Task::class, 'staff_task');
-}
+   
 }

@@ -44,6 +44,7 @@
     <body class="font-ecom text-gray-900 antialiased">
        
         @if (Route::has('login'))
+        
         <nav class="fixed flex justify-end w-full mt-4 mr-4">
            
             @auth
@@ -55,8 +56,8 @@
                     Dashboard
                 </a>
             @else
-            {{-- <div class="block absolute left-0 bottom-1">
-                <a class="font-medium text-lg ml-2" href="admin.adminlogin"><i class="ri-admin-line text-button text-2xl"></i> Admin Login</a>
+            {{-- <div class="block absolute left-0 ml-14 bottom-1">
+                <a class="font-medium text-lg ml-2" href="{{ route('admin-login') }}"><i class="ri-admin-line text-button text-2xl"></i> Admin Login</a>
             </div> --}}
                 <a
                     href="{{ route('login') }}"
@@ -68,24 +69,25 @@
                 @if (Route::has('register'))
                     <a
                         href="{{ route('register') }}"
-                        class="rounded-md px-3 py-2 font-medium text-lg text-black ring-1 ring-transparent transition hover:text-hover focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
+                        class="rounded-md px-3 mr-14 py-2 font-medium text-lg text-black ring-1 ring-transparent transition hover:text-hover focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
                     >
                         Register
                     </a>
                 @endif
             @endauth
         </nav>
+    
     @endif
         
         <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-bg dark:bg-gray-900">
            
-            <div>
+            <div class="mt-16"> 
                 <a href="/">
                     <x-application-logo/>
                 </a>
             </div>
 
-            <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white dark:bg-gray-800 shadow-md overflow-hidden sm:rounded-lg">
+            <div class="w-full sm:max-w-lg mt-6 mb-28 px-6 py-4 bg-white dark:bg-gray-800 shadow-md overflow-hidden sm:rounded-lg">
                 {{ $slot }}
             </div>
         </div>
