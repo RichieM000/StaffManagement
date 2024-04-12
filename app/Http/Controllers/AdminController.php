@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Task;
 use App\Models\User;
+use App\Models\TaskStatus;
 use Illuminate\Http\Request;
 
 class AdminController extends Controller
@@ -29,7 +30,7 @@ class AdminController extends Controller
         $overallTasksCount = Task::count();
     
          // Count rejected tasks
-         $rejectedTasksCount = Task::where('status', 'rejected')->count();
+         $rejectedTasksCount = TaskStatus::where('status', 'rejected')->count();
         // Check if the success message exists in the session
         $successMessage = session('successMessage');
 

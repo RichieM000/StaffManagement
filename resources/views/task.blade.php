@@ -27,45 +27,51 @@
         <div class="container mx-auto px-4 py-8">
             <h1 class="text-2xl font-bold mb-4">My Tasks</h1>
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-4 p-4">
-                
                 @foreach($tasks as $task)
                 <div class="bg-blue-50 flex justify-between p-4 rounded-lg shadow-md mb-4 transition duration-300 ease-in-out hover:bg-blue-200">
                     <div>
-                    <div class="text-xl font-semibold text-blue-900">{{ $task->title }}</div>
-                    <div class="text-gray-700">{{ $task->description }}</div>
-                    <div class="text-sm text-gray-600">Job Role: {{ $task->jobrole }}</div>
-                    <div class="text-sm text-gray-600">Deadline: {{ \Carbon\Carbon::parse($task->deadline)->format('Y-m-d') }}</div>
-                </div>
+                        <div class="text-xl font-semibold text-blue-900">{{ $task->title }}</div>
+                        <div class="text-gray-700">{{ $task->description }}</div>
+                        <div class="text-sm text-gray-600">Job Role: {{ $task->jobrole }}</div>
+                        <div class="text-sm text-gray-600">Committee On: {{ $task->kagawad_committee_on }}</div>
+                        <div class="text-sm text-gray-600">Deadline: {{ \Carbon\Carbon::parse($task->deadline)->format('Y-m-d') }}</div>
+                    </div>
                     <div class="mt-4 grid grid-cols-2 items-center">
-                        @if ($task->status === 'accepted')
-                        <span class="text-green-500 mr-2.5">Task Accepted</span>
-                            <form action="{{ route('task.complete', ['id' => $task->id]) }}" method="POST">
-                                @csrf
-                                <button type="submit" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md">Complete</button>
-                            </form>
-                           
-                        @elseif ($task->status === 'pending')
-                            <form action="{{ route('task.accept', $task->id) }}" method="POST">
-                                @csrf
-                                <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600">Accept</button>
-                            </form>
-                            <button class="bg-red-500 text-white px-4 py-2 rounded-md ml-2 hover:bg-red-600" onclick="openRejectModal('{{ $task->id }}')">Reject</button>
-                        @elseif ($task->status === 'rejected')
-                            <span class="text-red-500 mr-3">Task Rejected</span>
+                        @php
+                            $userTaskStatus = $task->taskStatus()->where('user_id', auth()->user()->id)->first();
+                        @endphp
+                        @if ($userTaskStatus)
+                            @if ($userTaskStatus->status === 'accepted')
+                                <span class="text-green-500 mr-2.5">Task Accepted</span>
+                                <form action="{{ route('task.complete', ['id' => $task->id]) }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md">Complete</button>
+                                </form>
+                            @elseif ($userTaskStatus->status === 'pending')
+                                <form action="{{ route('task.accept', $task->id) }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600">Accept</button>
+                                </form>
+                                <button class="bg-red-500 text-white px-4 py-2 rounded-md ml-2 hover:bg-red-600" onclick="openRejectModal('{{ $task->id }}')">Reject</button>
+                                @elseif ($userTaskStatus->status === 'rejected')
+                                    <span class="text-red-500 mr-3">Task Rejected</span>
+                            @elseif ($userTaskStatus->status === 'completed')
+                                <span class="text-green-500">Task Completed</span>
+                            @endif
                         @else
-                            
-                            <span class="text-green-500">Task Completed</span>
+                            {{-- Display default action when task status is not found for the current user --}}
+                            {{-- You can customize this section --}}
+                            <span class="text-gray-500">Task Status Unknown</span>
                         @endif
                     </div>
-                    
-                    
-                    <!-- Add more task details as needed -->
                 </div>
-                @endforeach
+            @endforeach
+            
+            
             </div>
 
     </div>
-
+   
       <!-- Reject Modal -->
       <div id="rejectModal" class="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75 hidden">
         <div class="bg-white p-6 rounded-lg shadow-lg">
@@ -82,13 +88,14 @@
             </form>
         </div>
     </div>
+    
 
     <script>
         function openRejectModal(taskId) {
             document.getElementById('rejectTaskId').value = taskId;
             document.getElementById('rejectModal').classList.remove('hidden');
         }
-
+    
         function closeRejectModal() {
             document.getElementById('rejectModal').classList.add('hidden');
         }

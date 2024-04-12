@@ -16,6 +16,7 @@
         <link href="https://fonts.googleapis.com/css2?family=Mukta+Vaani:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
         
         <script src="https://cdn.tailwindcss.com"></script>
+        <script src="js/app.js"></script>
         <script>
             tailwind.config = {
               theme: {
@@ -62,6 +63,7 @@
                 
             </main>
         </div>
-        {{-- <script src="{{ asset('js/app.js') }}"></script> --}}
+        <script src="js/app.js"></script>
+        <script src="{{ asset('js/app.js') }}"></script>
     </body>
 </html>

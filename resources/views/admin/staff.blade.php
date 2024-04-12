@@ -54,6 +54,7 @@
                     <form action="{{ route('admin.staff') }}" method="GET" class="flex items-center">
                         <label for="order_by" class="mr-2">Sort by:</label>
                         <select name="order_by" id="order_by" onchange="this.form.submit()" class="mt-1 p-2 border overflow-y-auto border-gray-300 rounded-md w-16 focus:outline-none focus:ring focus:ring-blue-300">
+                            <option value="default" {{ $orderBy == 'default' ? 'selected' : '' }}>---</option>
                             <option value="asc" {{ $orderBy == 'asc' ? 'selected' : '' }}>A-Z</option>
                             <option value="desc" {{ $orderBy == 'desc' ? 'selected' : '' }}>Z-A</option>
                         </select>
@@ -61,14 +62,14 @@
                     
                 </div>
                     
-                    <script>
-                        function sortStaff() {
-                            const orderBy = document.getElementById('order_by').value;
-                            const sortForm = document.getElementById('sortForm');
-                            sortForm.action = "{{ route('admin.staff') }}?order_by=" + orderBy;
-                            sortForm.submit();
-                        }
-                    </script>
+                        {{-- <script>
+                            function sortStaff() {
+                                const orderBy = document.getElementById('order_by').value;
+                                const sortForm = document.getElementById('sortForm');
+                                sortForm.action = "{{ route('admin.staff') }}?order_by=" + orderBy;
+                                sortForm.submit();
+                            }
+                        </script> --}}
 
 
         
@@ -87,6 +88,7 @@
                                         <th class="px-4 py-2 whitespace-nowrap">Email</th>
                                         <th class="px-4 py-2 whitespace-nowrap">Phone</th>
                                         <th class="px-4 py-2 whitespace-nowrap">Job Role</th>
+                                        <th class="px-4 py-2 whitespace-nowrap">Kagawad Committee</th>
                                         <th class="px-4 py-2 whitespace-nowrap">Work Schedule</th>
                                         
                                         <th class="py-3 px-6 text-center whitespace-nowrap">Edit</th>
@@ -108,6 +110,7 @@
                                         <td class="px-4 py-2 whitespace-nowrap">{{ $staffMember->email }}</td>
                                         <td class="px-4 py-2 whitespace-nowrap">{{ $staffMember->phone }}</td>
                                         <td class="px-4 py-2 whitespace-nowrap">{{ $staffMember->jobrole }}</td>
+                                        <td class="px-4 py-2 whitespace-wrap">{{ $staffMember->kagawad_committee_on }}</td>
                                         <td>
                                             @foreach($staffMember->workSchedules as $workSchedule)
                                             {{ $workSchedule->day_of_week }}: {{ \Carbon\Carbon::parse($workSchedule->start_time)->format('h:i A') }} to {{ \Carbon\Carbon::parse($workSchedule->end_time)->format('h:i A') }}<br>
@@ -116,9 +119,9 @@
                                        
                                         <td class="py-3 px-6 text-center whitespace-nowrap flex justify-center gap-2">
                                             <div>
-                                                <a class="text-xl text-button hover:text-hover" href="{{ route('admin.edit-staff', $staffMember->id) }}"><i class="ri-edit-fill"></i></a>
+                                                <a class="text-xl text-button hover:text-hover" href="/edit/staff/{{$staffMember->id}}"><i class="ri-edit-fill"></i></a>
                                             </div>
-                                            <form action="{{ route('admin.delete-staff', $staffMember->id) }}" method="POST">
+                                            <form action="/delete/staff/{{$staffMember->id}}" method="POST">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" onclick="return confirm('Are you sure you want to delete this staff member?')" class="text-red-500 text-xl hover:text-red-700"><i class="ri-delete-bin-fill"></i></button>

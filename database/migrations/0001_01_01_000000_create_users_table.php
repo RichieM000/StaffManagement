@@ -18,7 +18,8 @@ return new class extends Migration
             $table->enum('gender', ['male', 'female', 'other']); // Using enum for gender
             $table->integer('age'); // Using integer for age
             $table->string('address');
-            $table->string('jobrole')->nullable();
+            $table->string('jobrole')->default('None')->change();
+            $table->string('kagawad_committee_on')->default('None')->change();
             $table->string('email')->unique();
             $table->string('phone')->nullable();
             $table->string('usertype')->default('user');
@@ -57,7 +58,7 @@ return new class extends Migration
             $table->string('title');
             $table->text('description');
             $table->timestamp('deadline');
-            $table->string('jobrole');
+            $table->string('jobrole')->default('None');
             $table->boolean('completed')->default(false);
             $table->foreignId('assigned_to')->nullable()->constrained('users')->onDelete('set null');
             $table->timestamps();

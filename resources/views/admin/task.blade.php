@@ -52,6 +52,7 @@
                     <form action="{{ route('admin.task') }}" method="GET" class="flex items-center">
                         <label for="order_by" class="mr-2">Sort by:</label>
                         <select name="order_by" id="order_by" onchange="this.form.submit()" class="mt-1 p-2 border overflow-y-auto border-gray-300 rounded-md w-16 focus:outline-none focus:ring focus:ring-blue-300">
+                            <option value="default" {{ $orderBy == 'default' ? 'selected' : '' }}>---</option>
                             <option value="asc" {{ $orderBy == 'asc' ? 'selected' : '' }}>A-Z</option>
                             <option value="desc" {{ $orderBy == 'desc' ? 'selected' : '' }}>Z-A</option>
                         </select>
@@ -59,7 +60,7 @@
                     
                 </div>
                     
-                    <script>
+                    {{-- <script>
                         function sortTask() {
                             const orderBy = document.getElementById('order_by').value;
                             const sortForm = document.getElementById('sortForm');
@@ -67,7 +68,7 @@
                             sortForm.submit();
                         }
                     </script>
-
+ --}}
 
         
                     <div class="bg-white transition duration-300 ease-in-out shadow-md mt-4 rounded-lg overflow-x-auto">
@@ -81,6 +82,7 @@
                                         <th class="px-4 py-2 whitespace-nowrap">Description</th>
                                         <th class="px-4 py-2 whitespace-nowrap">Deadline</th>
                                         <th class="px-4 py-2 whitespace-nowrap">Departments</th>
+                                        <th class="px-4 py-2 whitespace-nowrap">Kagawad Committee</th>
                                         <th class="px-4 py-2 whitespace-nowrap">Status</th>
                                         <th class="px-4 py-2 whitespace-nowrap">Reject Reason</th>
                                         <th class="px-4 py-2 whitespace-nowrap">Completed</th>
@@ -108,14 +110,29 @@
                                             @foreach($task->jobRoles() as $jobRole)
                                                 {{ $jobRole }}
                                                 @if (!$loop->last) <!-- Add comma if not the last job role -->
-                                                    ,
+                                                    -
                                                 @endif
                                             @endforeach
                                         {{-- </div> --}}
                                         </td>
-                                        <td class="px-4 py-2 whitespace-nowrap">{{ $task->status }}</td>
-                                        <td class="px-4 py-2 whitespace-nowrap">{{ $task->rejection_reason }}</td>
+                                        <td class="px-4 py-2 whitespace-nowrap">{{ $task->kagawad_committee_on }}</td>
 
+                                        <td class="px-4 py-2 whitespace-nowrap">
+                                            @foreach($task->taskStatus as $taskStatus)
+                                            @if($loop->first)
+                                            {{ $task->taskStatus->first()->status }}
+                                        @endif
+                                            @endforeach
+                                        </td>
+                                        
+                                        <td class="px-4 py-2 whitespace-nowrap">
+                                            @foreach($task->taskStatus as $taskStatus)
+                                            @if($loop->first)
+                                            {{ $task->taskStatus->first()->rejection_reason }}
+                                        @endif
+                                            @endforeach
+                                        </td>
+                                        
                                         <td class="px-4 py-2 whitespace-nowrap">{{ $task->completed ? 'Yes' : 'No' }}</td>
                                         <td class="py-3 px-6 text-center whitespace-nowrap flex justify-center gap-2">
                                             <div>

@@ -69,26 +69,31 @@
                             </tr>
                         </thead>
                         <tbody class="text-gray-600 text-sm font-light">
+                           
+                           
                             <tr class="transition text-center duration-300 ease-in-out hover:bg-gray-100">
+                                
                                 <td class="">
                                     @foreach($staffData as $staff)
-                                        @if($staff->jobrole == "Chairman")
+                                    @if($staff->jobrole == "Chairman")
                                       
                                             {{$staff->fname}} {{$staff->lname}}<br><br>
                                        
-                                        @endif
+                                            @endif
                                     @endforeach
                                 </td>
+                                
+                              
                                 <td class="">
                                     @foreach($staffData as $staff)
-                                        @if($staff->jobrole == "Secretary")
+                                    @if($staff->jobrole == "Secretary")
                                     
                                             {{$staff->fname}} {{$staff->lname}}<br><br>
                                        
-                                        @endif
+                                            @endif
                                     @endforeach
                                 </td>
-                               
+                              
                                 <td class="">
                                     @foreach($staffData as $staff)
                                         @if($staff->jobrole == "Treasurer")
@@ -132,6 +137,7 @@
                                     @endforeach
                                 </td>
                             </tr>
+                            
                         </tbody>
                     </table>
                     

@@ -37,8 +37,8 @@
                 <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div id="successMessage" class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                         
-                        <div class="p-6 text-gray-900 dark:text-gray-100">
-                            {{ __('Your are Logged In!') }}
+                        <div class="p-6 text-gray-900 font-bold text-xl dark:text-gray-100">
+                            Welcome <span class="text-button capitalize">{{ Auth::user()->fname }}</span> 
                         </div>
                     </div>
                 </div>

@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Models\Task;
 use App\Models\User;
 use Illuminate\View\View;
+use App\Models\TaskStatus;
 use App\Models\WorkSchedule;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules;
@@ -30,13 +32,14 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $request->validate([
+        $validatedData = $request->validate([
             'fname' => 'required|string|max:255',
             'lname' => 'required|string|max:255',
             'age' => 'required|string|max:3',
             'gender' => 'required|string|max:255',
             'address' => 'required|string|max:255',
             'jobrole' => 'required|string|max:255',
+            // 'committee_roles' => 'array',
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'phone' => 'nullable|string|max:11|min:11',
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
@@ -49,6 +52,26 @@ class RegisteredUserController extends Controller
         $userData['password'] = Hash::make($request->password);
 
         $user = User::create($userData);
+   // check if the selected job role is kagawad
+   if($validatedData['jobrole'] === 'Kagawad' && $request->has('committee_roles')){
+    $user->kagawad_committee_on = implode(',', $request->committee_roles);
+    $user->save();
+}
+
+ // Fetch tasks based on job roles
+$tasks = Task::where('jobrole', $user->jobrole)->get();
+
+// Assign tasks to the user
+foreach ($tasks as $task) {
+    // Check if the task has a committee role that matches the user's kagawad_committee_on
+    if ($task->kagawad_committee_on === $user->kagawad_committee_on) {
+        TaskStatus::create([
+            'task_id' => $task->id,
+            'user_id' => $user->id,
+            'status' => 'pending',
+        ]);
+    }
+}
 
         WorkSchedule::create([
             'user_id' => $user->id,
@@ -56,6 +79,8 @@ class RegisteredUserController extends Controller
             'start_time' => $request->start_time,
             'end_time' => $request->end_time,
         ]);
+
+     
 
         event(new Registered($user));
 

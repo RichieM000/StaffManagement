@@ -1,6 +1,6 @@
 <!-- resources/views/components/sidebar.blade.php -->
 
-<aside class="bg-gray-800 mr-8 text-white h-screen min-w-72 flex flex-col">
+<aside class="bg-gray-800 mr-8 text-white h-dvh min-w-72 flex flex-col">
     
     {{-- Logo/Header --}}
     <div class="p-4">
@@ -28,6 +28,9 @@
             </li>
             <li>
                 <a href="#" class="block py-2 px-4 transition duration-300 ease-in-out hover:bg-gray-700"><i class="ri-calendar-schedule-fill"></i> Attendance & Time Tracking</a>
+            </li>
+            <li>
+                <a href="#" class="block py-2 px-4 transition duration-300 ease-in-out hover:bg-gray-700"><i class="ri-calendar-schedule-fill"></i> Leave Management</a>
             </li>
             <li>
                 <a href="#" class="block py-2 px-4 transition duration-300 ease-in-out hover:bg-gray-700"><i class="ri-feedback-fill"></i> Performance Evaluation</a>

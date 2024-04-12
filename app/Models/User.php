@@ -17,6 +17,7 @@ class User extends Authenticatable
         'age',
         'address',
         'jobrole',
+        'kagawad_committee_on',
         'email',
         'phone',
         'password',
@@ -49,4 +50,10 @@ public function getJobRoleAttribute()
 {
     return $this->attributes['jobrole']; // Assuming 'jobrole' is the attribute for job role in your User model
 }
+
+public function taskStatuses()
+{
+    return $this->hasMany(TaskStatus::class);
+}
+
 }

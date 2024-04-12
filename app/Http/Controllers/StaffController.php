@@ -12,19 +12,25 @@ class StaffController extends Controller
 {
     public function index(Request $request)
 {
-    $orderBy = $request->input('order_by', 'asc'); // Default order is ascending
+    $orderBy = $request->input('order_by', 'default'); // Default order is ascending
     $searchQuery = $request->input('search');
 
     // Perform the search query
-    $user = User::query()
-    ->where('usertype', '!=', 'admin')
-        ->when($searchQuery, function ($query) use ($searchQuery) {
-            return $query->where('fname', 'like', "%{$searchQuery}%")
+    $query = User::query()->where('usertype', '!=', 'admin');
+
+    if ($searchQuery) {
+        $query->where(function ($q) use ($searchQuery) {
+            $q->where('fname', 'like', "%{$searchQuery}%")
                 ->orWhere('lname', 'like', "%{$searchQuery}%");
-        })
-        ->orderBy('fname', $orderBy)
-        ->paginate(10)
-        ->withQueryString();
+        });
+    }
+
+    // Check if the orderBy value is default and apply the default order
+    if ($orderBy === 'default') {
+        $user = $query->latest()->paginate(10)->withQueryString();
+    } else {
+        $user = $query->orderBy('fname', $orderBy)->paginate(10)->withQueryString();
+    }
 
     if ($searchQuery && $user->isEmpty()) {
         $noItemsMessage = 'No items found!!';
@@ -49,25 +55,29 @@ class StaffController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validatedData = $request->validate([
             'fname' => 'required|string|max:255',
             'lname' => 'required|string|max:255',
             'age' => 'required|string|max:3',
             'gender' => 'required|string|max:255',
             'address' => 'required|string|max:255',
             'jobrole' => 'required|string|max:255',
-            'email' => 'required|email|unique:staff,email',
+            
+            'email' => 'required|email|unique:users,email',
             'phone' => 'nullable|string|max:11|min:11',
             'day_of_week' => 'required|string|max:255', // Add validation for day_of_week
             'start_time' => 'required|string|max:8', // Add validation for start_time (adjust as needed)
             'end_time' => 'required|string|max:8', // Add validation for end_time (adjust as needed)
         ]);
     
-        $user = new User(); // Create a new User instance
-        $user->fill($request->except('password')); // Fill the user data except the 'password' field
-        $user->password = ''; // Set the password to an empty string or null
-    
-        $user->save(); // Save the user
+        $userData = $request->all();
+        $userData['password'] = 'None';
+        $user = User::create($userData);
+
+        if($validatedData['jobrole'] === 'Kagawad' && $request->has('committee_roles')){
+            $user->kagawad_committee_on = implode(',', $request->committee_roles);
+            $user->save();
+        }
     
         // Create work schedule entry for the newly created staff member
         WorkSchedule::create([
@@ -88,40 +98,106 @@ class StaffController extends Controller
     return view('admin.edit-staff', compact('user'));
 }
 
-public function update(Request $request, $id)
+// public function update(Request $request, User $user)
+// {
+//     $validatedData = $request->validate([
+//         'fname' => 'required|string|max:255',
+//         'lname' => 'required|string|max:255',
+//         'age' => 'required|string|max:3',
+//         'gender' => 'required|string|max:255',
+//         'address' => 'required|string|max:255',
+//         'jobrole' => 'required|string|max:255',
+        
+//         'email' => 'required|email|unique:staff,email,' . $user->id,
+//         'phone' => 'nullable|string|max:11|min:11',
+//         'day_of_week' => 'required|string|max:255',
+//         'start_time' => 'required|string|max:8',
+//         'end_time' => 'required|string|max:8',
+//     ]);
+
+//    $userData = $request->fill($request->except('password'));
+//    $userData->password = '';
+//    $user->update($userData);
+
+//    if($validatedData['jobrole'] === 'Kagawad' && $request->has('committee_roles')){
+//     $user->kagawad_committee_on = implode(',', $request->committee_roles);
+//     $user->save();
+//    }
+
+//     // Update work schedule entry if needed
+//     $user->workSchedule->update([
+//         'day_of_week' => $request->day_of_week,
+//         'start_time' => $request->start_time,
+//         'end_time' => $request->end_time,
+
+//     ]);
+//     // WorkSchedule::where('user_id', $id)->update(['day_of_week' => $request->day_of_week, 'start_time' => $request->start_time, 'end_time' => $request->end_time]);
+
+//     return redirect()->route('admin.staff')->with('success', 'Staff member updated successfully.');
+// }
+
+public function update(Request $request, User $user)
 {
-    $request->validate([
+    $validatedData = $request->validate([
         'fname' => 'required|string|max:255',
         'lname' => 'required|string|max:255',
         'age' => 'required|string|max:3',
         'gender' => 'required|string|max:255',
         'address' => 'required|string|max:255',
         'jobrole' => 'required|string|max:255',
-        'email' => 'required|email|unique:staff,email,' . $id,
+        'email' => 'required|email|unique:staff,email,' . $user->id,
         'phone' => 'nullable|string|max:11|min:11',
         'day_of_week' => 'required|string|max:255',
         'start_time' => 'required|string|max:8',
         'end_time' => 'required|string|max:8',
+        'committee_roles' => 'nullable|array',
     ]);
 
-    $user = User::findOrFail($id);
-    $user->fill($request->except('password')); // Exclude the 'password' field
-    $user->password = ''; // Set the password to an empty string or null
+    // Fill the user data except for the password
+    // $userData = $request->except(['password', '_token', '_method']);
+
+
+    
+    $user->update($request->except('password'));
+
+    
+    // Check if the job role is being updated to "Kagawad" and there are committee roles
+    // if ($user->jobrole !== 'Kagawad' && $validatedData['jobrole'] === 'Kagawad' && $request->has('committee_roles')) {
+    //     $user->kagawad_committee_on = implode(',', $validatedData['committee_roles']);
+    // } elseif ($user->jobrole === 'Kagawad' && $validatedData['jobrole'] !== 'Kagawad') {
+    //     // Erase kagawad_committee_on if the job role is changing from "Kagawad"
+    //     $user->kagawad_committee_on = null;
+    // }
+    
+    // $user->save();
+    if($validatedData['jobrole'] === 'Kagawad' && $request->has('committee_roles')){
+        $user->kagawad_committee_on = implode(',', $request->committee_roles);
+       
+    }else{
+        $user->kagawad_committee_on = 'none';
+        
+    }
+
     $user->save();
 
-
     // Update work schedule entry if needed
-    WorkSchedule::where('user_id', $id)->update(['day_of_week' => $request->day_of_week, 'start_time' => $request->start_time, 'end_time' => $request->end_time]);
+    WorkSchedule::where('user_id', $user->id)->update(['day_of_week' => $request->day_of_week, 'start_time' => $request->start_time, 'end_time' => $request->end_time]);
 
     return redirect()->route('admin.staff')->with('success', 'Staff member updated successfully.');
 }
-public function destroy($id)
+
+
+
+
+
+
+public function destroy(User $user)
 {
-    $user = Staff::findOrFail($id);
+   
     $user->delete();
 
     // Delete associated work schedule entry if needed
-    WorkSchedule::where('user_id', $id)->delete();
+    // WorkSchedule::where('user_id', $id)->delete();
 
     return redirect()->route('admin.staff')->with('delete', 'Staff member deleted successfully.');
 }
