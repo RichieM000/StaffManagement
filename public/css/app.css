@@ -1,0 +1,11 @@
+.sort-icon {
+    margin-left: 5px;
+}
+
+.sort-icon.asc::after {
+    content: '▲'; /* Up arrow for ascending order */
+}
+
+.sort-icon.desc::after {
+    content: '▼'; /* Down arrow for descending order */
+}

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\LeaveRequest;
 use App\Models\Task;
 use App\Models\User;
 use App\Models\TaskStatus;
@@ -30,13 +31,20 @@ class AdminController extends Controller
         $overallTasksCount = Task::count();
     
          // Count rejected tasks
-         $rejectedTasksCount = TaskStatus::where('status', 'rejected')->count();
+         $pendingTasksCount = Task::where('status', 'pending')->count();
+         $acceptedTasksCount = Task::where('status', 'accepted')->count();
+         $completedTasksCount = Task::where('status', 'completed')->count();
+         $rejectedTasksCount = Task::where('status', 'rejected')->count();
         // Check if the success message exists in the session
         $successMessage = session('successMessage');
-
         
+        //count leave requests 
+        $overallLeaveCount = LeaveRequest::count();
+        $pendingLeave = LeaveRequest::where('status', 'pending')->count();
+        $rejectedLeave = LeaveRequest::where('status', 'rejected')->count();
+        $approveLeave = LeaveRequest::where('status', 'approved')->count();                
     
-        return view('admin.dashboard', compact('overallUsersCount', 'usersByJobrole', 'overallTasksCount', 'successMessage', 'rejectedTasksCount'));
+        return view('admin.dashboard', compact('overallUsersCount', 'pendingTasksCount', 'acceptedTasksCount', 'completedTasksCount', 'approveLeave', 'pendingLeave', 'rejectedLeave', 'overallLeaveCount', 'usersByJobrole', 'overallTasksCount', 'successMessage', 'rejectedTasksCount'));
     }
 
     public function user(){

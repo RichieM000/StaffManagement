@@ -1,9 +1,9 @@
 <x-app-layout>
-    <x-slot name="header">
+    {{-- <x-slot name="header">
         <h2 class="font-semibold text-xl text-center text-gray-800 leading-tight">
             {{ __('Admin Dashboard') }}
         </h2>
-    </x-slot>
+    </x-slot> --}}
 
     <!-- Main content with sidebar -->
     <div class="flex">
@@ -12,9 +12,12 @@
         <div class="flex-1 p-4">
             <div class="max-w-full mx-auto sm:px-6 lg:px-8">
                 <div class="container mx-auto py-6">
+                    <h2 class="font-bold text-2xl mb-8 text-center text-gray-800 leading-tight">
+                        {{ __('Admin Dashboard') }}
+                    </h2>
                     <div class="flex justify-between items-center">
-                        <h1 class="text-2xl font-semibold mb-4">Task Management</h1>
-                        <a href="{{ route('add-task') }}" class="rounded bg-green-500 p-1.5 text-white hover:bg-green-700"><i class="ri-add-large-fill"></i> Add New</a>
+                        <h1 class="text-2xl font-semibold mb-4">Leave Management</h1>
+                        {{-- <a href="{{ route('add-task') }}" class="rounded bg-green-500 p-1.5 text-white hover:bg-green-700"><i class="ri-add-large-fill"></i> Add New</a> --}}
                     </div>
                     @if(session('success'))
                     <div id="successMessage" class="bg-green-100 transition duration-300 ease-in-out border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
@@ -44,12 +47,12 @@
                     </script>
                     @endif
                     <div class="flex justify-between mt-4">
-                    <form action="{{ route('admin.task') }}" method="GET" class="mb-4">
+                    <form action="{{ route('admin-leave') }}" method="GET" class="mb-4">
                         <input type="text" name="search" placeholder="Search Staff..." value="{{ request()->input('search') }}" class="px-3 py-1 border border-gray-300 rounded-md">
                         <button type="submit" class="bg-blue-500 text-white px-4 ml-2 py-1 rounded-md hover:bg-hover">Search</button>
                     </form>
 
-                    <form action="{{ route('admin.task') }}" method="GET" class="flex items-center">
+                    <form action="{{ route('admin-leave') }}" method="GET" class="flex items-center">
                         <label for="order_by" class="mr-2">Sort by:</label>
                         <select name="order_by" id="order_by" onchange="this.form.submit()" class="mt-1 p-2 border overflow-y-auto border-gray-300 rounded-md w-16 focus:outline-none focus:ring focus:ring-blue-300">
                             <option value="default" {{ $orderBy == 'default' ? 'selected' : '' }}>---</option>
@@ -78,15 +81,15 @@
                                 <thead>
                                     <tr class="bg-gray-200 text-gray-700 uppercase text-sm font-medium leading-normal">
                                         <!-- Existing headers -->
+                                        <th class="px-4 py-2 whitespace-nowrap">Leave Type</th>
                                         <th class="px-4 py-2 whitespace-nowrap">Name</th>
-                                        <th class="px-4 py-2 whitespace-nowrap">Task Title</th>
-                                        <th class="px-4 py-2 whitespace-nowrap">Description</th>
-                                        <th class="px-4 py-2 whitespace-nowrap">Deadline</th>
-                                        <th class="px-4 py-2 whitespace-nowrap">Departments</th>
-                                        {{-- <th class="px-4 py-2 whitespace-nowrap">Kagawad Committee</th> --}}
+                                        <th class="px-4 py-2 whitespace-nowrap">Staff Role</th>
+                                        
+                                        <th class="px-4 py-2 whitespace-nowrap">Reason</th>
+                                        <th class="px-4 py-2 whitespace-nowrap">Start Date</th>
+                                        <th class="px-4 py-2 whitespace-nowrap">End Date</th>
                                         <th class="px-4 py-2 whitespace-nowrap">Status</th>
-                                        <th class="px-4 py-2 whitespace-nowrap">Reject Reason</th>
-                                        {{-- <th class="px-4 py-2 whitespace-nowrap">Completed</th> --}}
+                                        <th class="px-4 py-2 whitespace-nowrap">Action</th>
 
 
 
@@ -94,72 +97,66 @@
                                         {{-- <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th> --}}
                                         
                                         
-                                        <th class="py-3 px-6 text-center whitespace-nowrap">Action</th>
+                                      
                                         <!-- New header for Assign Task button -->
                                        
                                     </tr>
                                 </thead>
                                 <tbody class="text-gray-600 text-sm font-light">
-                                   
-                                    @foreach ($tasks as $task)
+                                    @foreach($leaveRequests as $leaveRequest)
                                     <tr class="border-b border-gray-200 transition duration-300 ease-in-out text-center hover:bg-gray-100">
-                                        <td class="px-4 py-2 whitespace-nowrap">{{ $task->assignedTo->fname }}</td>
-                                        <td class="px-4 py-2 whitespace-nowrap">{{ $task->title }}</td>
-                                        <td class="px-4 py-2 whitespace-nowrap">{{ $task->description }}</td>
-                                        <td class="px-4 py-2 whitespace-nowrap">{{ \Carbon\Carbon::parse($task->deadline)->format('Y-m-d') }}</td>
-                                        <td class="px-4 py-2 whitespace-wrap max-w-60">
-                                            {{-- <div class="flex flex-nowrap"> --}}
-                                            @foreach($task->jobRoles() as $jobRole)
-                                                {{ $jobRole }}
-                                                @if (!$loop->last) <!-- Add comma if not the last job role -->
-                                                    -
-                                                @endif
-                                            @endforeach
-                                        {{-- </div> --}}
-                                        </td>
-                                        {{-- <td class="px-4 py-2 whitespace-nowrap">{{ $task->kagawad_committee_on }}</td> --}}
+                                        <td class="px-4 py-2 whitespace-wrap">{{ $leaveRequest->leave_type }}</td>
+                                        <td class="px-4 py-2 whitespace-wrap capitalize">{{ $leaveRequest->user->fname }}</td>
+                                        <td class="px-4 py-2 whitespace-wrap">{{ $leaveRequest->user->jobrole }}</td>
+                                        
+                                        <td class="px-4 py-2 whitespace-wrap">{{ $leaveRequest->reason }}</td>
+                                        <td class="px-4 py-2 whitespace-wrap">{{ $leaveRequest->start_date }}</td>
+                                        <td class="px-4 py-2 whitespace-wrap">{{ $leaveRequest->end_date }}</td>
+                                        <td class="px-4 py-2 whitespace-wrap capitalize">{{ $leaveRequest->status }}</td>
 
-                                        <td class="px-4 py-2 whitespace-nowrap">
-                                           
-                                            {{ $task->status }}
-                                        
-                                        </td>
-                                        
-                                        <td class="px-4 py-2 whitespace-nowrap">
-                                            @foreach($task->taskStatus as $taskStatus)
-                                            @if($loop->first)
-                                            {{ $task->taskStatus->first()->rejection_reason }}
-                                        @endif
-                                            @endforeach
-                                        </td>
-                                        
-                                        {{-- <td class="px-4 py-2 whitespace-nowrap">{{ $task->completed ? 'Yes' : 'No' }}</td> --}}
+
                                         <td class="py-3 px-6 text-center whitespace-nowrap flex justify-center gap-2">
-                                            <div>
-                                                <a class="text-xl text-button hover:text-hover" href="{{ route('tasks-edit', $task->id) }}"><i class="ri-edit-fill"></i></a>
-                                            </div>
-                                            <form action="{{ route('tasks-destroy', $task->id) }}" method="POST">
+
+                                            @if ($leaveRequest->status === 'pending')
+                                            <form action="{{ route('admin-approve', ['id' => $leaveRequest->id]) }}" method="POST">
+                                                @csrf
+                                                @method('PUT')
+                                                <input type="hidden" name="action" value="approve">
+                                                <button class="text-button text-2xl hover:text-hover"><i class="ri-checkbox-circle-fill"></i></button>
+                                            </form>
+                                    
+                                            <form action="{{ route('admin-reject', ['id' => $leaveRequest->id]) }}" method="POST">
+                                                @csrf
+                                                @method('PUT')
+                                                <input type="hidden" name="action" value="rejected">
+                                                <button type="submit" onclick="return confirm('Are you sure you want to delete this staff member?')" class="text-red-500 text-2xl hover:text-red-700"><i class="ri-close-circle-fill"></i></button>
+                                            </form>
+                                        @elseif ($leaveRequest->status === 'approved' || $leaveRequest->status === 'rejected')
+                                            <form action="{{ route('admin-delete', ['id' => $leaveRequest->id]) }}" method="POST">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" onclick="return confirm('Are you sure you want to delete this staff member?')" class="text-red-500 text-xl hover:text-red-700"><i class="ri-delete-bin-fill"></i></button>
+                                                <button type="submit" onclick="return confirm('Are you sure you want to delete this staff member?')" class="text-red-500 text-2xl hover:text-red-700"><i class="ri-delete-bin-fill"></i></button>
                                             </form>
+                                        @endif
+                                        
 
                                         </td>
-                                       
-                                        {{-- Add more columns as needed --}}
+                                        
+                                        
+                                        <!-- Other columns and data -->
                                     </tr>
                                 @endforeach
-                                 
+                                  
                                 </tbody>
                             </table>
                             
                         </div>
                     </div>
                     <!-- Pagination links -->
-                    <div class="mt-4">
-                        {{ $tasks->appends(['order_by' => $orderBy])->links() }}
+                    {{-- <div class="mt-4">
+                        {{ $leaveRequests->appends(['order_by' => $orderBy])->links() }}
 
-                    </div>
+                    </div> --}}
                 </div>
             </div>
         </div>

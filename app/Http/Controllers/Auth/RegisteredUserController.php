@@ -39,7 +39,7 @@ class RegisteredUserController extends Controller
             'gender' => 'required|string|max:255',
             'address' => 'required|string|max:255',
             'jobrole' => 'required|string|max:255',
-            // 'committee_roles' => 'array',
+            'committee_roles' => 'array',
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'phone' => 'nullable|string|max:11|min:11',
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
@@ -58,20 +58,24 @@ class RegisteredUserController extends Controller
     $user->save();
 }
 
- // Fetch tasks based on job roles
-$tasks = Task::where('jobrole', $user->jobrole)->get();
+// Simplified Laravel code
 
-// Assign tasks to the user
-foreach ($tasks as $task) {
-    // Check if the task has a committee role that matches the user's kagawad_committee_on
-    if ($task->kagawad_committee_on === $user->kagawad_committee_on) {
-        TaskStatus::create([
-            'task_id' => $task->id,
-            'user_id' => $user->id,
-            'status' => 'pending',
-        ]);
-    }
-}
+// // Find tasks based on user's jobrole or committee roles
+// $tasks = Task::where('jobrole', $user->jobrole)
+//     ->orWhereIn('jobrole', explode(',', $user->kagawad_committee_on))
+//     ->get();
+
+// // Assign tasks to the user
+// foreach ($tasks as $task) {
+//     // Create TaskStatus if task committee role matches user's kagawad_committee_on
+//     if ($task->kagawad_committee_on === $user->kagawad_committee_on) {
+//         TaskStatus::create([
+//             'task_id' => $task->id,
+//             'user_id' => $user->id,
+//             'status' => 'pending',
+//         ]);
+//     }
+// }
 
         WorkSchedule::create([
             'user_id' => $user->id,

@@ -1,19 +1,25 @@
 <x-app-layout>
-    <x-slot name="header">
+    {{-- <x-slot name="header">
         <h2 class="font-semibold text-xl text-center text-gray-800 leading-tight">
             {{ __('Admin Dashboard') }}
         </h2>
-    </x-slot>
+    </x-slot> --}}
 
     <!-- Main content with sidebar -->
+    
+  
     <div class="flex">
         <x-sidebar /> <!-- Include the sidebar component -->
 
-      
+       
+       
 
         <div class="flex-1 p-4">
             <div class="max-w-full mx-auto sm:px-6 lg:px-8">
                 <div class="container mx-auto py-6">
+                    <h2 class="font-bold text-2xl mb-8 text-center text-gray-800 leading-tight">
+                        {{ __('Admin Dashboard') }}
+                    </h2>
                     <div class="flex justify-between items-center">
                         <h1 class="text-2xl font-semibold mb-4">Staff Information</h1>
                         <a href="{{ route('admin.add-staff') }}" class="rounded bg-green-500 p-1.5 text-white hover:bg-green-700"><i class="ri-add-large-fill"></i> Add New</a>
@@ -97,41 +103,47 @@
                                     </tr>
                                 </thead>
                                 <tbody class="text-gray-600 text-sm font-light">
-                                    @if($noItemsMessage)
-                                    <p>{{ $noItemsMessage }}</p>
+                                    @if ($noItemsMessage)
+                                        <tr>
+                                            <td colspan="10">{{ $noItemsMessage }}</td>
+                                        </tr>
                                     @else
-                                    @foreach($user as $staffMember)
-                                    <tr class="border-b border-gray-200 transition duration-300 ease-in-out text-center hover:bg-gray-100">
-                                        <td class="px-4 py-2 whitespace-nowrap">{{ $staffMember->fname }}</td>
-                                        <td class="px-4 py-2 whitespace-nowrap">{{ $staffMember->lname }}</td>
-                                        <td class="px-4 py-2 whitespace-nowrap">{{ $staffMember->gender }}</td>
-                                        <td class="px-4 py-2 whitespace-nowrap">{{ $staffMember->age }}</td>
-                                        <td class="px-4 py-2 whitespace-nowrap">{{ $staffMember->address }}</td>
-                                        <td class="px-4 py-2 whitespace-nowrap">{{ $staffMember->email }}</td>
-                                        <td class="px-4 py-2 whitespace-nowrap">{{ $staffMember->phone }}</td>
-                                        <td class="px-4 py-2 whitespace-nowrap">{{ $staffMember->jobrole }}</td>
-                                        <td class="px-4 py-2 whitespace-wrap">{{ $staffMember->kagawad_committee_on }}</td>
-                                        <td>
-                                            @foreach($staffMember->workSchedules as $workSchedule)
-                                            {{ $workSchedule->day_of_week }}: {{ \Carbon\Carbon::parse($workSchedule->start_time)->format('h:i A') }} to {{ \Carbon\Carbon::parse($workSchedule->end_time)->format('h:i A') }}<br>
-                                            @endforeach
-                                        </td>
-                                       
-                                        <td class="py-3 px-6 text-center whitespace-nowrap flex justify-center gap-2">
-                                            <div>
-                                                <a class="text-xl text-button hover:text-hover" href="/edit/staff/{{$staffMember->id}}"><i class="ri-edit-fill"></i></a>
-                                            </div>
-                                            <form action="/delete/staff/{{$staffMember->id}}" method="POST">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" onclick="return confirm('Are you sure you want to delete this staff member?')" class="text-red-500 text-xl hover:text-red-700"><i class="ri-delete-bin-fill"></i></button>
-                                            </form>
-                                        </td>
-                                        
-                                    </tr>
-                                    @endforeach
+                                        @foreach ($user as $staffMember)
+                                          
+                                            <tr class="border-b border-gray-200 transition duration-300 ease-in-out text-center hover:bg-gray-100 ">
+                                                <td class="px-4 py-2 whitespace-wrap">{{ $staffMember->fname }}</td>
+                                                <td class="px-4 py-2 whitespace-wrap">{{ $staffMember->lname }}</td>
+                                                <td class="px-4 py-2 whitespace-wrap">{{ $staffMember->gender }}</td>
+                                                <td class="px-4 py-2 whitespace-wrap">{{ $staffMember->age }}</td>
+                                                <td class="px-4 py-2 whitespace-nowrap">{{ $staffMember->address }}</td>
+                                                <td class="px-4 py-2 whitespace-wrap">{{ $staffMember->email }}</td>
+                                                <td class="px-4 py-2 whitespace-wrap">{{ $staffMember->phone }}</td>
+                                                <td class="px-4 py-2 whitespace-wrap">{{ $staffMember->jobrole }}</td>
+                                                <td class="px-4 py-2 whitespace-wrap">{{ $staffMember->kagawad_committee_on }}</td>
+                                                <td>
+                                                    @foreach ($staffMember->workSchedules as $workSchedule)
+                                                        {{ $workSchedule->day_of_week }}: {{ \Carbon\Carbon::parse($workSchedule->start_time)->format('h:i A') }} to {{ \Carbon\Carbon::parse($workSchedule->end_time)->format('h:i A') }}<br>
+                                                    @endforeach
+                                                </td>
+                                                
+                                                <td class="py-3 px-6 text-center whitespace-nowrap flex justify-center gap-2">
+                                                    <div>
+                                                        <a class="text-xl text-button hover:text-hover" href="/edit/staff/{{ $staffMember->id }}"><i class="ri-edit-fill"></i></a>
+                                                    </div>
+                                                    <form action="/delete/staff/{{ $staffMember->id }}" method="POST">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" onclick="return confirm('Are you sure you want to delete this staff member?')" class="text-red-500 text-xl hover:text-red-700"><i class="ri-delete-bin-fill"></i></button>
+                                                    </form>
+                                                </td>
+                                           
+                                            </tr>
+                                        @endforeach
                                     @endif
                                 </tbody>
+                                
+                              
+                                
                             </table>
                             
                         </div>
