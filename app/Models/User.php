@@ -11,6 +11,7 @@ class User extends Authenticatable
     use HasFactory, Notifiable;
 
     protected $fillable = [
+        'id',
         'fname',
         'lname',
         'gender',
@@ -28,10 +29,16 @@ class User extends Authenticatable
         return $this->hasMany(WorkSchedule::class);
     }
 
+    // public function tasks()
+    // {
+    //     return $this->hasMany(Task::class, 'assigned_to');
+    // }
+
     public function tasks()
     {
         return $this->hasMany(Task::class, 'assigned_to');
     }
+
 
     protected $hidden = [
         'password',
@@ -51,9 +58,14 @@ public function getJobRoleAttribute()
     return $this->attributes['jobrole']; // Assuming 'jobrole' is the attribute for job role in your User model
 }
 
-public function taskStatuses()
+public function taskStatus()
 {
-    return $this->hasMany(TaskStatus::class);
+    return $this->hasMany(TaskStatus::class, 'user_id');
+}
+
+public function leaveRequest()
+{
+    return $this->hasMany(LeaveRequest::class);
 }
 
 }

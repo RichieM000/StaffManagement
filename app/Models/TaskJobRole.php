@@ -9,11 +9,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class TaskJobRole extends Model
 {
-    protected $fillable = ['task_id', 'job_role', 'status', 'rejection_reason'];
-
-    public function task()
-    {
-        return $this->belongsTo(Task::class);
-    }
+   //
 }
 

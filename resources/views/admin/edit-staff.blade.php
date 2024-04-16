@@ -163,7 +163,12 @@
                         <div class="sm:grid-cols-2 gap-4">
                             <div>
                                 <label for="day_of_week" class="block text-sm font-medium text-gray-700">Day of Week</label>
-                                <input type="text" name="day_of_week" id="day_of_week" value="{{ $user->day_of_week }}" class="mt-1 p-2 border border-gray-300 rounded-md w-full">
+                                <select name="day_of_week" id="day_of_week" class="mt-1 p-2 border overflow-y-auto border-gray-300 rounded-md w-full" required>
+                                    <option value="Monday-Friday">Monday-Friday</option>
+                                    <option value="Monday-Saturday">Monday-Saturday</option>
+                                    <option value="Saturday-Sunday">Saturday-Sunday</option>
+                                   
+                                </select>
                             </div>
                             <div>
                                 <label for="start_time" class="block text-sm font-medium text-gray-700">Start Time</label>

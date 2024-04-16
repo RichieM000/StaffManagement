@@ -1,20 +1,19 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AdminController;
-use App\Http\Controllers\StaffController;
-use App\Http\Controllers\TeamController;
-use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\TeamController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\LeaveController;
+use App\Http\Controllers\StaffController;
+use App\Http\Controllers\ProfileController;
 
 Route::get('/', function () {
     return view('auth.login');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified', 'user'])->name('dashboard');
+Route::get('/dashboard', [UserController::class, 'index'])->middleware(['auth', 'verified', 'user'])->name('dashboard');
 
 Route::middleware('auth', 'verified', 'user')->group(function () {
 
@@ -24,7 +23,11 @@ Route::middleware('auth', 'verified', 'user')->group(function () {
     Route::post('/task/complete/{id}', [TaskController::class, 'complete'])->name('task.complete');
 
 
-    
+    Route::get('/leave', [LeaveController::class, 'userleave'])->name('user.leave');
+    Route::post('/leave/{id}/fileleave', [LeaveController::class, 'store'])->name('user.fileleave');
+
+
+
     });
     
 
@@ -64,13 +67,16 @@ Route::get('admin/task', [TaskController::class, 'index'])->name('admin.task');
 Route::get('admin/add-task', [TaskController::class, 'create'])->name('add-task');
 Route::post('/tasks', [TaskController::class, 'store'])->name('tasks-store');
 Route::get('/tasks/{task}/edit', [TaskController::class, 'edit'])->name('tasks-edit');
-Route::put('/tasks/{task}', [TaskController::class, 'update'])->name('tasks-update');
+Route::put('/tasks/{id}', [TaskController::class, 'update'])->name('tasks-update');
 Route::delete('/tasks/{task}', [TaskController::class, 'destroy'])->name('tasks-destroy');
 
 Route::get('admin/tasks/pending', [TaskController::class, 'pendingTasks'])->name('admin.tasks.pending');
 
 
-
+Route::get('admin/leave', [LeaveController::class, 'adminIndex'])->name('admin-leave');
+Route::put('admin/leave/approve/{id}', [LeaveController::class, 'approveLeaveRequest'])->name('admin-approve');
+Route::put('admin/leave/reject/{id}', [LeaveController::class, 'rejectLeaveRequest'])->name('admin-reject');
+Route::delete('admin/leave/delete/{id}', [LeaveController::class, 'destroy'])->name('admin-delete');
 
 });
 Route::get('admin/login', [AdminController::class, 'show'])->name('admin-login');

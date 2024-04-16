@@ -15,6 +15,9 @@ class TaskController extends Controller
     {
         $orderBy = $request->input('order_by', 'default'); // Default order is ascending
         $searchQuery = $request->input('search');
+        
+
+      
 
         $tasks = Task::with('taskStatus')->get();
         // Perform the search query
@@ -67,7 +70,8 @@ class TaskController extends Controller
    {
      
        // Assuming you have a way to retrieve staff members with their job roles
-       $staffWithRoles = User::all();
+       $staffWithRoles = User::where('usertype', '!=', 'admin')->get();
+
    
        // Filter staff members based on job roles (e.g., 'Kapitan', 'Secretary', etc.)
        $kapitans = $staffWithRoles->where('jobrole', 'Chairman');
@@ -82,88 +86,61 @@ class TaskController extends Controller
        // Add more job roles as needed
    
        // Pass the filtered staff members to the view
-       return view('admin.add-task', compact('kapitans', 'secretaries' ,'treasurers',
+       return view('admin.add-task', compact('kapitans','staffWithRoles', 'secretaries' ,'treasurers',
         'kagawads', 'tanods', 'skchairmans', 'sk', 'bhw'));
    }
 
    public function store(Request $request)
-   {
-       // Validate form data
-       $validatedData = $request->validate([
-           'title' => 'required',
-           'description' => 'required',
-           'deadline' => 'required|date',
-           'job_roles' => 'array', // Ensure job_roles is an array
-       ]);
-   
-       // Concatenate job roles into a comma-separated string
-       $jobRolesString = implode(',', $validatedData['job_roles']);
-   
-       // Determine if Kagawad role is selected and set kagawad_committee_on accordingly
-       $kagawadCommitteeOn = in_array('Kagawad', $validatedData['job_roles']) 
-           ? implode(',', $request->committee_roles)
-           : 'none';
-   
-       // Create a new task
-       $task = Task::create([
-           'title' => $validatedData['title'],
-           'description' => $validatedData['description'],
-           'deadline' => $validatedData['deadline'],
-           'jobrole' => $jobRolesString, // Assign the determined job roles to the task
-           'kagawad_committee_on' => $kagawadCommitteeOn, // Set kagawad_committee_on
-           'completed' => false,
-       ]);
-   
-       foreach ($validatedData['job_roles'] as $role) {
-        $users = User::where('jobrole', $role)->get();
-    
-        foreach ($users as $user) {
-            // Determine the appropriate status based on kagawad_committee_on
-            $status = $user->jobrole === 'Kagawad' && $request->has('committee_roles')
-                ? 'pending' // or any other appropriate status for Kagawads with committee roles
-                : 'pending'; // default status for other job roles
-    
-            // Check if the user is a Kagawad with a committee role
-            if ($user->jobrole === 'Kagawad' && $user->kagawad_committee_on) {
-                // Check if there are Kagawads with the same committee role
-                $kagawadsWithSameRole = User::where('jobrole', 'Kagawad')
-                    ->where('kagawad_committee_on', $user->kagawad_committee_on)
-                    ->exists();
-    
-                // Skip assigning tasks only if there are other Kagawads with the same role
-                if ($kagawadsWithSameRole && !in_array($user->kagawad_committee_on, $request->committee_roles)) {
-                    continue;
-                }
-            }
-    
-            TaskStatus::create([
-                'task_id' => $task->id,
-                'user_id' => $user->id,
-                'status' => $status,
-            ]);
-        }
-    
-        // If the role is Kagawad and has committee roles, also assign tasks to committee members
-        if ($role === 'Kagawad' && $request->has('committee_roles')) {
-            foreach ($request->committee_roles as $committeeRole) {
-                $committeeUsers = User::where('jobrole', $committeeRole)->get();
-    
-                foreach ($committeeUsers as $committeeUser) {
-                    TaskStatus::create([
-                        'task_id' => $task->id,
-                        'user_id' => $committeeUser->id,
-                        'status' => 'pending', // or any other appropriate status for committee members
-                    ]);
-                }
-            }
-        }
-    }
-    
-    
+{
+   // Validate form data
+$validatedData = $request->validate([
+    'staffs' => 'array',
+    'jobrole' => 'string|required',
+    'title' => 'required',
+    'description' => 'required',
+    'deadline' => 'required|date',
+]);
 
-       // Return success response
-       return redirect()->route('admin.task')->with('success', 'Task created successfully.');
-   }
+// Concatenate selected staffs into a comma-separated string
+
+// Create a new task
+Task::create([
+    'assigned_to' =>implode(',', $validatedData['staffs']),
+    'title' => $validatedData['title'],
+    'jobrole' => $validatedData['jobrole'],
+    'description' => $validatedData['description'],
+    'deadline' => $validatedData['deadline'],
+ 
+   
+]);
+    
+// Assign task to selected staffs based on last name priority
+
+$selectedStaffs = User::whereIn('lname', $validatedData['staffs'])
+    ->where('usertype', '!=', 'admin')
+    ->get();
+
+foreach ($selectedStaffs as $selectedStaff) {
+    Task::create([
+        'user_id' => $selectedStaff->id, // Assign the user ID based on last names directly
+        'status' => 'pending',
+    ]);
+}
+
+
+// foreach ($selectedStaffs as $selectedStaff) {
+//     TaskStatus::create([
+//         'task_id' => $task->id,
+//         'user_id' => $selectedStaff->id, // Assign the user ID based on last names directly
+//         'status' => 'pending',
+//     ]);
+// }
+
+return redirect()->route('admin.task')->with('success', 'Task created successfully.');
+ 
+   
+   
+}
    
    
 
@@ -209,7 +186,7 @@ public function edit(Task $task)
 
     
     // Assuming you have a way to retrieve staff members with their job roles
-    $staffWithRoles = User::all();
+    $staffWithRoles = User::where('usertype', '!=', 'admin')->get();
    
     // Filter staff members based on job roles (e.g., 'Kapitan', 'Secretary', etc.)
     $kapitans = $staffWithRoles->where('jobrole', 'Chairman');
@@ -224,43 +201,57 @@ public function edit(Task $task)
     // Add more job roles as needed
 
     // Pass the filtered staff members and the task to the view
-    return view('admin.edit-task', compact('task', 'kapitans', 'secretaries', 'treasurers',
+    return view('admin.edit-task', compact('task', 'kapitans', 'staffWithRoles', 'secretaries', 'treasurers',
         'kagawads', 'tanods', 'skchairmans', 'sk', 'bhw'));
 }
 
-public function update(Request $request, Task $task)
+public function update(Request $request, $id)
 {
     // Validate form data
-    $validatedData = $request->validate([
+   $validatedData = $request->validate([
+        'staffs' => 'array',
+        'jobrole' => 'string|required',
         'title' => 'required',
         'description' => 'required',
         'deadline' => 'required|date',
-        'job_roles' => 'array', // Ensure job_roles is an array
     ]);
 
-    // Concatenate job roles into a comma-separated string
-    $jobRolesString = implode(',', $validatedData['job_roles']);
-    $kagawadCommitteeOn = in_array('Kagawad', $validatedData['job_roles']) 
-    ? implode(',', $request->committee_roles)
-    : 'none';
+    // Concatenate selected staffs into a comma-separated string
+    $staffsString = implode(',', $validatedData['staffs']);
+    
+    // Find the task to update
+   
+   
+ // Find and update the task
+ $task = Task::findOrFail($id);
+ $task->assigned_to = $staffsString;
+ $task->title = $validatedData['title'];
+ $task->jobrole = $validatedData['jobrole'];
+ $task->description = $validatedData['description'];
+ $task->deadline = $validatedData['deadline'];
+ $task->save();
 
-    // Update the task
-    $task->update([
-        'title' => $validatedData['title'],
-        'description' => $validatedData['description'],
-        'deadline' => $validatedData['deadline'],
-        'jobrole' => $jobRolesString,
-        'kagawad_committee_on' => $kagawadCommitteeOn, // Assign the determined job roles to the task
-    ]);
+    // Assign task to selected staffs based on last name priority
+    $selectedStaffs = User::whereIn('lname', $validatedData['staffs'])
+        ->where('usertype', '!=', 'admin')
+        ->get();
 
-    // Return success response
+        foreach ($selectedStaffs as $selectedStaff) {
+            Task::create([
+            
+                'user_id' => $selectedStaff->id, // Assign the user ID based on last names directly
+                'status' => 'pending',
+            ]);
+        }
+
     return redirect()->route('admin.task')->with('success', 'Task updated successfully.');
 }
+
 
 public function destroy(Task $task)
 {
     // Detach the task from all associated staff members
-    $task->users()->detach();
+    $task->user()->detach();
 
     // Delete the task
     $task->delete();
@@ -277,30 +268,30 @@ public function userTask()
     $user = auth()->user();
 
     // Retrieve tasks assigned to the user's task statuses
-    $tasks = $user->taskStatuses()
-        ->with('task') // Eager load the associated task
-        ->where('status', '!=', 'completed') // Exclude completed tasks
-        ->get()
-        ->pluck('task'); // Extract the task from the task status collection
+    $tasks = $user->tasks()
+        
+         // Exclude completed tasks
+        ->get(); // Extract the task from the task status collection
 
     return view('task', compact('user', 'tasks'));
 }
 
   public function accept($id)
   {
-      $task = Task::findOrFail($id);
-  
-      // Check if the task status is 'pending' for the current user
-      $taskStatus = TaskStatus::where('task_id', $task->id)
-          ->where('user_id', auth()->user()->id) // Assuming you are using authentication
-          ->where('status', 'pending')
-          ->firstOrFail();
-  
-      // Update the task status to 'accepted'
-      $taskStatus->status = 'accepted';
-      $taskStatus->save();
-  
-      return redirect()->back()->with('success', 'Task accepted successfully.');
+     
+    $task = Task::findOrFail($id);
+
+    // Check if the task status is 'pending' for the current user
+    $taskStatus = Task::where('id', $task->id)
+        ->where('assigned_to', auth()->user()->id) // Assuming you are using authentication
+        ->where('status', 'pending')
+        ->firstOrFail();
+
+    // Update the task status to 'accepted'
+    $taskStatus->status = 'in_progress';
+    $taskStatus->save();
+
+    return redirect()->back()->with('success', 'Task accepted successfully.');
   }
 
 
@@ -353,7 +344,7 @@ public function complete($id)
     $task = Task::findOrFail($id);
 
     // Find the latest status for the task
-    $latestStatus = $task->taskStatus()->latest()->first();
+    $latestStatus = Task::where('id', $task->id)->latest()->first();
 
     if ($latestStatus) {
         // Update the latest status to 'completed'

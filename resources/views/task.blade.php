@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-center text-gray-800 leading-tight">
-            {{ __('Staff Dashboard') }}
+            {{ __('Tasks') }}
         </h2>
     </x-slot>
 
@@ -26,7 +26,11 @@
 
         <div class="container mx-auto px-4 py-8">
             <h1 class="text-2xl font-bold mb-4">My Tasks</h1>
+            
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-4 p-4">
+                @if($tasks->isEmpty())
+    <p>Empty Task</p>
+@else
                 @foreach($tasks as $task)
                 <div class="bg-blue-50 flex justify-between p-4 rounded-lg shadow-md mb-4 transition duration-300 ease-in-out hover:bg-blue-200">
                     <div>
@@ -36,38 +40,43 @@
                         <div class="text-sm text-gray-600">Committee On: {{ $task->kagawad_committee_on }}</div>
                         <div class="text-sm text-gray-600">Deadline: {{ \Carbon\Carbon::parse($task->deadline)->format('Y-m-d') }}</div>
                     </div>
-                    <div class="mt-4 grid grid-cols-2 items-center">
-                        @php
-                            $userTaskStatus = $task->taskStatus()->where('user_id', auth()->user()->id)->first();
-                        @endphp
-                        @if ($userTaskStatus)
-                            @if ($userTaskStatus->status === 'accepted')
-                                <span class="text-green-500 mr-2.5">Task Accepted</span>
+                    <div class="mt-4 flex justify-end flex-col items-center">
+                       
+                        
+                            @if ($task->status === 'in_progress')
+                           
+                                <span class="text-green-500 mr-2.5">In Progress</span>
                                 <form action="{{ route('task.complete', ['id' => $task->id]) }}" method="POST">
                                     @csrf
-                                    <button type="submit" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md">Complete</button>
+                                    <div class="flex flex-col text-sm items-center mt-4">
+                                        <div>
+                                            <label for="file">File:</label>
+                                        <input type="file" id="file" name="file" class="border w-56 rounded-md px-2 py-1">
+                                    </div>
+                                        <button type="submit" class="bg-green-500 mt-2 hover:bg-green-600 text-white px-3 py-1 rounded-md">Complete</button>
+                                
+                                </div>
                                 </form>
-                            @elseif ($userTaskStatus->status === 'pending')
+                            
+                            @elseif ($task->status === 'pending')
                                 <form action="{{ route('task.accept', $task->id) }}" method="POST">
                                     @csrf
                                     <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600">Accept</button>
                                 </form>
                                 <button class="bg-red-500 text-white px-4 py-2 rounded-md ml-2 hover:bg-red-600" onclick="openRejectModal('{{ $task->id }}')">Reject</button>
-                                @elseif ($userTaskStatus->status === 'rejected')
+                                @elseif ($task->status === 'rejected')
                                     <span class="text-red-500 mr-3">Task Rejected</span>
-                            @elseif ($userTaskStatus->status === 'completed')
+                            @else
                                 <span class="text-green-500">Task Completed</span>
+                               
                             @endif
-                        @else
-                            {{-- Display default action when task status is not found for the current user --}}
-                            {{-- You can customize this section --}}
-                            <span class="text-gray-500">Task Status Unknown</span>
-                        @endif
+                        
+                        
                     </div>
                 </div>
             @endforeach
             
-            
+            @endif
             </div>
 
     </div>

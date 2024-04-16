@@ -19,7 +19,35 @@
             </div>
 
         
-
+            <div class="container mx-auto px-4 py-8">
+              
+        
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h2 class="text-xl font-semibold mb-4">Your Task Count</h2>
+                        <ul class="bg-blue-400 text-white p-2 rounded-lg">
+                            @foreach($taskCounts as $taskCount)
+                                <li class="flex justify-between">
+                                    <span>{{ ucfirst($taskCount->status) }}</span>
+                                    <span class="text-lg">{{ $taskCount->count }}</span>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
+        
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h2 class="text-xl font-semibold mb-4">Your Leave Request Count</h2>
+                        <ul class="bg-green-500 text-white p-2 rounded-lg">
+                            @foreach($leaveCounts as $leaveCount)
+                                <li class="flex justify-between">
+                                    <div> {{ ucfirst($leaveCount->status) }}</div>
+                                    <div class="text-lg ">{{ $leaveCount->count }}</div>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
+                </div>
+            </div>
 
 
         </div>

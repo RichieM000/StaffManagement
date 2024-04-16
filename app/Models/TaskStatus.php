@@ -7,8 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class TaskStatus extends Model
 {
-    protected $fillable = ['task_id', 'user_id', 'status', 'rejection_reason'];
+    use HasFactory;
 
+    protected $fillable = ['task_id', 'user_id', 'status', 'rejection_reason'];
+    protected $table = 'task_status';
     public function task()
     {
         return $this->belongsTo(Task::class);

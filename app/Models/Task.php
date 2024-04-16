@@ -9,7 +9,7 @@ class Task extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'description', 'deadline', 'rejection_reason', 'completed', 'jobrole', 'kagawad_committee_on', 'assigned_to'];
+    protected $fillable = ['title', 'user_id', 'description', 'deadline', 'jobrole', 'assigned_to', 'status','rejected_reason'];
     protected $dates = ['deadline'];
 
     public function assignedTo()
@@ -29,9 +29,9 @@ class Task extends Model
 //     return view('admin.tasks.pending', compact('tasks'));
 // }
 
-    public function users()
+    public function user()
 {
-    return $this->belongsToMany(User::class, 'staff_task');
+    return $this->belongsToMany(User::class, 'assigned_to');
 }
 
 public function taskStatus()

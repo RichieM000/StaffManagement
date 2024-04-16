@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 
+use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Staff;
+use App\Models\LeaveRequest;
 use App\Models\WorkSchedule;
 use Illuminate\Http\Request;
 
@@ -21,7 +23,10 @@ class StaffController extends Controller
     if ($searchQuery) {
         $query->where(function ($q) use ($searchQuery) {
             $q->where('fname', 'like', "%{$searchQuery}%")
-                ->orWhere('lname', 'like', "%{$searchQuery}%");
+                ->orWhere('lname', 'like', "%{$searchQuery}%")
+                ->orWhere('email', 'like', "%{$searchQuery}%")
+                ->orWhere('jobrole', 'like', "%{$searchQuery}%")
+                ->orWhere('address', 'like', "%{$searchQuery}%");
         });
     }
 
@@ -37,6 +42,8 @@ class StaffController extends Controller
     } else {
         $noItemsMessage = null;
     }
+
+
 
     return view('admin.staff', compact('user', 'orderBy', 'noItemsMessage', 'searchQuery'));
 }
