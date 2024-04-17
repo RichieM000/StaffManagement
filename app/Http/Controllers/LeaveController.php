@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\LeaveRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -13,7 +14,8 @@ class LeaveController extends Controller
 
         $user = auth()->user();
 
-       
+        
+        
         $leaveRequests = LeaveRequest::with('user:id,jobrole,fname')->get();
         $pendingRequests = LeaveRequest::where('status', 'pending')->get();
         $approvedRequests = LeaveRequest::where('status', 'approved')->get();
@@ -23,7 +25,7 @@ class LeaveController extends Controller
     }
 
     public function store(Request $request){
-        
+        try{
         $validatedData = $request->validate([
             'leave_type' => 'required',
             'start_date' => 'required|date',
@@ -44,11 +46,52 @@ class LeaveController extends Controller
         ]);
     
         return redirect()->route('user.leave', compact('leaveRequests'))->with('success', 'Leave Submitted Successfully');
+    }catch (\Exception $e) {
+        return redirect()->back()->with('error', 'An error occurred while creating the Leave Request.');
+    } 
+
     }
 
+    public function edit(LeaveRequest $leaveRequest)
+{
+    $user = auth()->user();
+    // Assuming you want to retrieve only the leave request associated with the current user
+    $leaveRequests = $user->leaveRequest()->get(); // Assuming there's a relationship between User and LeaveRequest models
 
+    return view('edit-leave', compact('user', 'leaveRequest', 'leaveRequests'));
+}
 
+public function update(Request $request, LeaveRequest $leaveRequest)
+{
+    try {
+        $validatedData = $request->validate([
+            'leave_type' => 'required',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after:start_date',
+            'reason' => 'required',
+        ]);
 
+        $leaveRequest->update([
+            'leave_type' => $validatedData['leave_type'],
+            'start_date' => $validatedData['start_date'],
+            'end_date' => $validatedData['end_date'],
+            'reason' => $validatedData['reason'],
+        ]);
+
+        return redirect()->route('user.leave', compact('leaveRequest'))->with('success', 'Leave Updated Successfully');
+    } catch (\Exception $e) {
+        return redirect()->back()->with('error', 'An error occurred while updating the Leave Request.');
+    }
+}
+public function delete($leaveRequest)
+{
+    
+    $leaveRequest = LeaveRequest::findOrFail($leaveRequest);
+    $leaveRequest ->delete();
+
+    // Return success response
+    return redirect()->route('user.leave')->with('delete', 'Task deleted successfully.');
+}
 
     public function adminIndex(Request $request){
 

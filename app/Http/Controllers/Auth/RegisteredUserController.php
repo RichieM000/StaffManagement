@@ -52,9 +52,19 @@ class RegisteredUserController extends Controller
         $userData['password'] = Hash::make($request->password);
 
         $user = User::create($userData);
+
+        
    // check if the selected job role is kagawad
    if($validatedData['jobrole'] === 'Kagawad' && $request->has('committee_roles')){
     $user->kagawad_committee_on = implode(',', $request->committee_roles);
+    
+    $user->save();
+}
+
+if($user->kagawad_committee_on === null){
+
+    $user->kagawad_committee_on = "None";
+
     $user->save();
 }
 

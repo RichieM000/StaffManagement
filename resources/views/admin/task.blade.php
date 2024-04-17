@@ -126,11 +126,9 @@
                                         </td>
                                         
                                         <td class="px-4 py-2 whitespace-nowrap">
-                                            @foreach($task->taskStatus as $taskStatus)
-                                            @if($loop->first)
-                                            {{ $task->taskStatus->first()->rejection_reason }}
-                                        @endif
-                                            @endforeach
+                                           
+                                            {{ $task->rejected_reason }}
+                                      
                                         </td>
                                         
                                         {{-- <td class="px-4 py-2 whitespace-nowrap">{{ $task->completed ? 'Yes' : 'No' }}</td> --}}
@@ -138,10 +136,10 @@
                                             <div>
                                                 <a class="text-xl text-button hover:text-hover" href="{{ route('tasks-edit', $task->id) }}"><i class="ri-edit-fill"></i></a>
                                             </div>
-                                            <form action="{{ route('tasks-destroy', $task->id) }}" method="POST">
+                                            <form action="{{ route('tasks-destroy', ['task' => $task->id]) }}" method="POST">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" onclick="return confirm('Are you sure you want to delete this staff member?')" class="text-red-500 text-xl hover:text-red-700"><i class="ri-delete-bin-fill"></i></button>
+                                                <button type="submit" onclick="return confirm('Are you sure you want to delete this task assignment?')" class="text-red-500 text-xl hover:text-red-700"><i class="ri-delete-bin-fill"></i></button>
                                             </form>
 
                                         </td>

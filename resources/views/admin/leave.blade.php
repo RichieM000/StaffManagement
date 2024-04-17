@@ -75,6 +75,8 @@
 
         
                     <div class="bg-white transition duration-300 ease-in-out shadow-md mt-4 rounded-lg overflow-x-auto">
+                       
+
                         <div class="overflow-x-auto">
                             <table class="w-full table-auto" id="staffTable">
                                 <!-- Table headers -->
@@ -102,9 +104,13 @@
                                        
                                     </tr>
                                 </thead>
-                                <tbody class="text-gray-600 text-sm font-light">
+                               
+                             
+                                 <tbody class="text-gray-600 text-sm font-light">
+                                    
                                     @foreach($leaveRequests as $leaveRequest)
-                                    <tr class="border-b border-gray-200 transition duration-300 ease-in-out text-center hover:bg-gray-100">
+                                   
+                                        <tr class="border-b border-gray-200 transition duration-300 ease-in-out text-center hover:bg-gray-100">
                                         <td class="px-4 py-2 whitespace-wrap">{{ $leaveRequest->leave_type }}</td>
                                         <td class="px-4 py-2 whitespace-wrap capitalize">{{ $leaveRequest->user->fname }}</td>
                                         <td class="px-4 py-2 whitespace-wrap">{{ $leaveRequest->user->jobrole }}</td>
@@ -129,13 +135,13 @@
                                                 @csrf
                                                 @method('PUT')
                                                 <input type="hidden" name="action" value="rejected">
-                                                <button type="submit" onclick="return confirm('Are you sure you want to delete this staff member?')" class="text-red-500 text-2xl hover:text-red-700"><i class="ri-close-circle-fill"></i></button>
+                                                <button type="submit" onclick="return confirm('Are you sure you want to reject this leave request?')" class="text-red-500 text-2xl hover:text-red-700"><i class="ri-close-circle-fill"></i></button>
                                             </form>
                                         @elseif ($leaveRequest->status === 'approved' || $leaveRequest->status === 'rejected')
                                             <form action="{{ route('admin-delete', ['id' => $leaveRequest->id]) }}" method="POST">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" onclick="return confirm('Are you sure you want to delete this staff member?')" class="text-red-500 text-2xl hover:text-red-700"><i class="ri-delete-bin-fill"></i></button>
+                                                <button type="submit" onclick="return confirm('Are you sure you want to delete this leave request?')" class="text-red-500 text-2xl hover:text-red-700"><i class="ri-delete-bin-fill"></i></button>
                                             </form>
                                         @endif
                                         
@@ -145,11 +151,12 @@
                                         
                                         <!-- Other columns and data -->
                                     </tr>
+                                    
                                 @endforeach
-                                  
+                                
                                 </tbody>
                             </table>
-                            
+                           
                         </div>
                     </div>
                     <!-- Pagination links -->

@@ -34,7 +34,7 @@
                         <option value="BHW">Barangay Health Workers</option>
                         
                     </select>
-                    <x-input-error :messages="$errors->get('phone')" class="mt-2" />
+                    <x-input-error :messages="$errors->get('jobrole')" class="mt-2" />
                 </div>
 
 
@@ -59,18 +59,21 @@
                 <div class="mb-4">
                     <label for="title" class="block font-medium text-sm text-gray-700">Task Title:</label>
                     <input type="text" name="title" id="title" value="{{ old('title', $task->title) }}" class="mt-1 p-2 borderoverflow-y-auto border-gray-300 rounded-md w-full" required>
+                    <x-input-error :messages="$errors->get('title')" class="mt-2" />
                 </div>
         
                 <!-- Task Description -->
                 <div class="mb-4">
                     <label for="description" class="block font-medium text-sm text-gray-700">Task Description:</label>
                     <textarea name="description" id="description" rows="3" class="mt-1 p-2 borderoverflow-y-auto border-gray-300 rounded-md w-full" required>{{ old('description', $task->description) }}</textarea>
+                    <x-input-error :messages="$errors->get('description')" class="mt-2" />
                 </div>
 
                  <!-- Task Deadline -->
                  <div class="mb-6">
                     <label for="deadline" class="block font-medium text-sm text-gray-700">Task Deadline:</label>
                     <input type="date" name="deadline" id="deadline" value="{{ old('deadline', $task->deadline) }}"  class="mt-1 p-2 borderoverflow-y-auto border-gray-300 rounded-md w-full" required>
+                    <x-input-error :messages="$errors->get('deadline')" class="mt-2" />
                 </div>
 
                 <!-- Task Submission Button -->

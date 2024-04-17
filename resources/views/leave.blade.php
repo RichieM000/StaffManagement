@@ -104,9 +104,16 @@
                             <div class="text-base text-green-600">Status: {{ ucfirst($leaveRequest->status) }}</div>
                             @elseif($leaveRequest->status === 'rejected')
                             <div class="text-base text-red-600">Status: {{ ucfirst($leaveRequest->status) }}</div>
+                            <form action="/leave/{{$leaveRequest->id}}" method="POST">
+                                @csrf
+                                @method('DELETE')
+                            <button onclick="return confirm('Are you sure you want to delete this leave request?')" class="bg-button mt-2 py-2 px-8 rounded-md text-center text-red-500 text-xl hover:bg-hover"><i class="ri-delete-bin-fill"></i></button>
+                        </form>
                             @else
                             <div class="text-base text-gray-600">Status: {{ ucfirst($leaveRequest->status) }}</div>
+                            <a href="/leave/{{$leaveRequest->id}}/edit" class="bg-button mt-2 py-1.5 rounded-md text-center text-white hover:bg-hover"><i class="ri-edit-fill"></i></a>
                             @endif
+                            
                         </div>
                     </div>
                 @endforeach

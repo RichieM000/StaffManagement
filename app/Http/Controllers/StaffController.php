@@ -62,39 +62,46 @@ class StaffController extends Controller
 
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
-            'fname' => 'required|string|max:255',
-            'lname' => 'required|string|max:255',
-            'age' => 'required|string|max:3',
-            'gender' => 'required|string|max:255',
-            'address' => 'required|string|max:255',
-            'jobrole' => 'required|string|max:255',
-            
-            'email' => 'required|email|unique:users,email',
-            'phone' => 'nullable|string|max:11|min:11',
-            'day_of_week' => 'required|string|max:255', // Add validation for day_of_week
-            'start_time' => 'required|string|max:8', // Add validation for start_time (adjust as needed)
-            'end_time' => 'required|string|max:8', // Add validation for end_time (adjust as needed)
-        ]);
+        try {
+            $validatedData = $request->validate([
+                'fname' => 'required|string|max:255',
+                'lname' => 'required|string|max:255',
+                'age' => 'required|string|max:3',
+                'gender' => 'required|string|max:255',
+                'address' => 'required|string|max:255',
+                'jobrole' => 'required|string|max:255',
+                'email' => 'required|email|unique:users,email',
+                'phone' => 'nullable|string|max:11|min:11',
+                'day_of_week' => 'required|string|max:255',
+                'start_time' => 'required|string|max:8',
+                'end_time' => 'required|string|max:8',
+            ]);
     
-        $userData = $request->all();
-        $userData['password'] = 'None';
-        $user = User::create($userData);
-
-        if($validatedData['jobrole'] === 'Kagawad' && $request->has('committee_roles')){
-            $user->kagawad_committee_on = implode(',', $request->committee_roles);
-            $user->save();
+            $userData = $request->all();
+            $userData['password'] = 'None';
+            $user = User::create($userData);
+    
+            if ($validatedData['jobrole'] === 'Kagawad' && $request->has('committee_roles')) {
+                $user->kagawad_committee_on = implode(',', $request->committee_roles);
+                $user->save();
+            }
+            if($user->kagawad_committee_on === null){
+                $user->kagawad_committee_on = "None";            
+                $user->save();
+            }
+    
+            // Create work schedule entry for the newly created staff member
+            WorkSchedule::create([
+                'user_id' => $user->id,
+                'day_of_week' => $request->day_of_week,
+                'start_time' => $request->start_time,
+                'end_time' => $request->end_time,
+            ]);
+    
+            return redirect()->route('admin.staff')->with('success', 'Staff member and work schedule created successfully.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'An error occurred while creating the staff member and work schedule.');
         }
-    
-        // Create work schedule entry for the newly created staff member
-        WorkSchedule::create([
-            'user_id' => $user->id,
-            'day_of_week' => $request->day_of_week, // Use input value for day_of_week
-            'start_time' => $request->start_time, // Use input value for start_time
-            'end_time' => $request->end_time, // Use input value for end_time
-        ]);
-    
-        return redirect()->route('admin.staff')->with('success', 'Staff member and work schedule created successfully.');
     }
 
 
@@ -145,6 +152,7 @@ class StaffController extends Controller
 
 public function update(Request $request, User $user)
 {
+    try{
     $validatedData = $request->validate([
         'fname' => 'required|string|max:255',
         'lname' => 'required|string|max:255',
@@ -191,6 +199,9 @@ public function update(Request $request, User $user)
     WorkSchedule::where('user_id', $user->id)->update(['day_of_week' => $request->day_of_week, 'start_time' => $request->start_time, 'end_time' => $request->end_time]);
 
     return redirect()->route('admin.staff')->with('success', 'Staff member updated successfully.');
+    }catch(\Exception $e) {
+        return redirect()->back()->with('error', 'An error occurred while updating the staff member and work schedule.');
+    }
 }
 
 
