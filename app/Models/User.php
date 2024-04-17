@@ -68,4 +68,9 @@ public function leaveRequest()
     return $this->hasMany(LeaveRequest::class);
 }
 
+public function assignedTo()
+{
+    return $this->hasMany(Task::class, 'assigned_to');
+}
+
 }

@@ -19,13 +19,15 @@ Route::middleware('auth', 'verified', 'user')->group(function () {
 
     Route::get('/task', [TaskController::class, 'userTask'])->name('user.task');
     Route::post('/task/{id}/accept', [TaskController::class, 'accept'])->name('task.accept');
-    Route::post('/task/reject', [TaskController::class, 'reject'])->name('task.reject');
+    Route::post('/task/reject/{id}', [TaskController::class, 'reject'])->name('task.reject');
     Route::post('/task/complete/{id}', [TaskController::class, 'complete'])->name('task.complete');
 
 
     Route::get('/leave', [LeaveController::class, 'userleave'])->name('user.leave');
-    Route::post('/leave/{id}/fileleave', [LeaveController::class, 'store'])->name('user.fileleave');
-
+    Route::post('/leave/{leaveRequest}/fileleave', [LeaveController::class, 'store'])->name('user.fileleave');
+    Route::get('/leave/{leaveRequest}/edit', [LeaveController::class, 'edit'])->name('user.leaveedit');
+    Route::put('/leave/{leaveRequest}/update', [LeaveController::class, 'update'])->name('user.leaveupdate');
+    Route::delete('/leave/{leaveRequest}', [LeaveController::class, 'delete'])->name('user.leavedestroy');
 
 
     });
@@ -35,7 +37,7 @@ Route::middleware('auth', 'verified', 'user')->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
 });
@@ -68,7 +70,7 @@ Route::get('admin/add-task', [TaskController::class, 'create'])->name('add-task'
 Route::post('/tasks', [TaskController::class, 'store'])->name('tasks-store');
 Route::get('/tasks/{task}/edit', [TaskController::class, 'edit'])->name('tasks-edit');
 Route::put('/tasks/{id}', [TaskController::class, 'update'])->name('tasks-update');
-Route::delete('/tasks/{task}', [TaskController::class, 'destroy'])->name('tasks-destroy');
+Route::delete('/tasks/{task}/delete', [TaskController::class, 'destroy'])->name('tasks-destroy');
 
 Route::get('admin/tasks/pending', [TaskController::class, 'pendingTasks'])->name('admin.tasks.pending');
 

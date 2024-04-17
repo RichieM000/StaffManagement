@@ -73,7 +73,7 @@
                 <option value="BHW">Barangay Health Workers</option>
                 
             </select>
-            <x-input-error :messages="$errors->get('phone')" class="mt-2" />
+            <x-input-error :messages="$errors->get('jobrole')" class="mt-2" />
         </div>
 
         <div class="col-span-2 mt-4"  id="checkboxDiv">

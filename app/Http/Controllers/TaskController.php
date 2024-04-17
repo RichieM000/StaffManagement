@@ -19,7 +19,7 @@ class TaskController extends Controller
 
       
 
-        $tasks = Task::with('taskStatus')->get();
+        $tasks = Task::all();
         // Perform the search query
       // Perform the search query
     $query = Task::query();
@@ -92,6 +92,8 @@ class TaskController extends Controller
 
    public function store(Request $request)
 {
+
+    try{
    // Validate form data
 $validatedData = $request->validate([
     'staffs' => 'array',
@@ -138,7 +140,9 @@ foreach ($selectedStaffs as $selectedStaff) {
 
 return redirect()->route('admin.task')->with('success', 'Task created successfully.');
  
-   
+    }catch (\Exception $e) {
+        return redirect()->back()->with('error', 'An error occurred while creating the Task Assignment.');
+    } 
    
 }
    
@@ -207,9 +211,10 @@ public function edit(Task $task)
 
 public function update(Request $request, $id)
 {
+    try{
     // Validate form data
    $validatedData = $request->validate([
-        'staffs' => 'array',
+        'staffs' => 'array|required',
         'jobrole' => 'string|required',
         'title' => 'required',
         'description' => 'required',
@@ -245,16 +250,17 @@ public function update(Request $request, $id)
         }
 
     return redirect()->route('admin.task')->with('success', 'Task updated successfully.');
+}catch (\Exception $e) {
+    return redirect()->back()->with('error', 'An error occurred while updating the Task Assignment.');
+} 
 }
 
 
-public function destroy(Task $task)
+public function destroy($task)
 {
     // Detach the task from all associated staff members
-    $task->user()->detach();
-
-    // Delete the task
-    $task->delete();
+    $task = Task::findOrFail($task);
+        $task->delete();
 
     // Return success response
     return redirect()->route('admin.task')->with('delete', 'Task deleted successfully.');
@@ -268,10 +274,7 @@ public function userTask()
     $user = auth()->user();
 
     // Retrieve tasks assigned to the user's task statuses
-    $tasks = $user->tasks()
-        
-         // Exclude completed tasks
-        ->get(); // Extract the task from the task status collection
+    $tasks = $user->tasks()->get(); // Extract the task from the task status collection
 
     return view('task', compact('user', 'tasks'));
 }
@@ -308,16 +311,16 @@ public function userTask()
 public function reject(Request $request)
 {
     $validatedData = $request->validate([
-        'task_id' => 'required|exists:tasks,id',
-        'reason' => 'required|string|max:255',
+        'id' => 'required|exists:tasks,id',
+        'rejected_reason' => 'required|string|max:255',
     ]);
 
-    $taskStatus = TaskStatus::where('task_id', $validatedData['task_id'])
-        ->where('user_id', auth()->user()->id) // Assuming you are using user authentication
+    $taskStatus = Task::where('id', $validatedData['id'])
+        ->where('assigned_to', auth()->user()->id) // Assuming you are using user authentication
         ->firstOrFail();
 
     $taskStatus->status = 'rejected';
-    $taskStatus->rejection_reason = $validatedData['reason'];
+    $taskStatus->rejected_reason = $validatedData['rejected_reason'];
     $taskStatus->save();
 
     return redirect()->back()->with('success', 'Task rejected successfully.');

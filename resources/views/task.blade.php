@@ -59,11 +59,13 @@
                                 </form>
                             
                             @elseif ($task->status === 'pending')
-                                <form action="{{ route('task.accept', $task->id) }}" method="POST">
+                            <div class="grid grid-cols-1">
+                                <form action="{{ route('task.accept', $task->id) }}" class="m-0 p-0" method="POST">
                                     @csrf
-                                    <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600">Accept</button>
+                                    <button type="submit" class="bg-green-500 mb-4 text-white px-4 py-2 rounded-md hover:bg-green-600">Accept</button>
                                 </form>
-                                <button class="bg-red-500 text-white px-4 py-2 rounded-md ml-2 hover:bg-red-600" onclick="openRejectModal('{{ $task->id }}')">Reject</button>
+                                <button class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600" onclick="openRejectModal('{{ $task->id }}')">Reject</button>
+                            </div>
                                 @elseif ($task->status === 'rejected')
                                     <span class="text-red-500 mr-3">Task Rejected</span>
                             @else
@@ -74,9 +76,7 @@
                         
                     </div>
                 </div>
-            @endforeach
-            
-            @endif
+          
             </div>
 
     </div>
@@ -85,11 +85,11 @@
       <div id="rejectModal" class="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75 hidden">
         <div class="bg-white p-6 rounded-lg shadow-lg">
             <h2 class="text-lg font-semibold mb-4">Reject Task</h2>
-            <form action="{{ route('task.reject') }}" method="POST">
+            <form action="/task/reject/{{$task->id}}" method="POST">
                 @csrf
-                <input type="hidden" name="task_id" id="rejectTaskId">
-                <label for="reason" class="block mb-2">Reason for rejection:</label>
-                <textarea name="reason" id="reason" class="w-full h-32 border border-gray-300 rounded-md px-3 py-2"></textarea>
+                <input type="hidden" name="id" id="rejectTaskId">
+                <label for="rejected_reason" class="block mb-2">Reason for rejection:</label>
+                <textarea name="rejected_reason" id="reason" class="w-full h-32 border border-gray-300 rounded-md px-3 py-2"></textarea>
                 <div class="mt-4 flex justify-end">
                     <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700">Reject</button>
                     <button type="button" class="ml-4 text-gray-600 px-4 py-2 rounded-md border border-gray-300 hover:bg-gray-100" onclick="closeRejectModal()">Cancel</button>
@@ -97,7 +97,9 @@
             </form>
         </div>
     </div>
-    
+    @endforeach
+            
+    @endif
 
     <script>
         function openRejectModal(taskId) {
