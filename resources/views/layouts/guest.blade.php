@@ -27,6 +27,10 @@
                     button: '#1291ee',
                     hover: '#0c68ab'
                   },
+                  backgroundImage:{
+                    watermark: "url('/img/logo.png')"
+                  },
+                 
                   fontFamily:{
                     ecom: ['Mukta Vaani'],
                   },
@@ -46,7 +50,7 @@
        
         @if (Route::has('login'))
         
-        <nav class="fixed flex justify-end w-full mt-4 mr-4">
+        <nav class="fixed w-full mt-4 mr-4">
            
             @auth
 
@@ -60,38 +64,47 @@
             {{-- <div class="block absolute left-0 ml-14 bottom-1">
                 <a class="font-medium text-lg ml-2" href="{{ route('admin-login') }}"><i class="ri-admin-line text-button text-2xl"></i> Admin Login</a>
             </div> --}}
-                <a
+                {{-- <a
                     href="{{ route('login') }}"
                     class="rounded-md px-3 py-2 font-medium text-lg text-black ring-1 ring-transparent transition hover:text-hover focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
                 >
                     Log in
-                </a>
+                </a> --}}
 
                 @if (Route::has('register'))
-                    <a
+                    {{-- <a
                         href="{{ route('register') }}"
                         class="rounded-md px-3 mr-14 py-2 font-medium text-lg text-black ring-1 ring-transparent transition hover:text-hover focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
                     >
                         Register
-                    </a>
+                    </a> --}}
                 @endif
             @endauth
         </nav>
     
     @endif
-        
-        <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-bg dark:bg-gray-900">
-           
-            <div class="mt-16"> 
-                <a href="/">
-                    <x-application-logo/>
-                </a>
-            </div>
-
-            <div class="w-full sm:max-w-lg mt-6 mb-28 px-6 py-4 bg-white dark:bg-gray-800 shadow-md overflow-hidden sm:rounded-lg">
-                {{ $slot }}
-            </div>
+    
+    <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-bg dark:bg-gray-900">
+        <div class="max-w-44">
+            <img src="/img/logo.png" alt="">
         </div>
+        <div class="mt-5">
+            <a href="/">
+                <x-application-logo/>
+            </a>
+        </div>
+    
+        <!-- Watermark covering the entire background -->
+       
+        <div class="absolute inset-12 bg-contain bg-watermark bg-center bg-no-repeat opacity-10 z-0"></div>
+    
+        <!-- Main content container with form -->
+        <div class="w-full sm:max-w-lg mt-6 mb-28 px-6 py-4 bg-white dark:bg-gray-800 shadow-md overflow-hidden sm:rounded-lg z-10">
+            {{ $slot }}
+        </div>
+    </div>
+    
         {{-- <script src="{{ asset('js/app.js') }}"></script> --}}
+        
     </body>
 </html>

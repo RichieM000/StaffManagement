@@ -18,7 +18,7 @@ class StaffController extends Controller
     $searchQuery = $request->input('search');
 
     // Perform the search query
-    $query = User::query()->where('usertype', '!=', 'admin');
+    $query = User::query()->whereNotIn('usertype', ['systemadmin', 'admin']);
 
     if ($searchQuery) {
         $query->where(function ($q) use ($searchQuery) {
@@ -32,9 +32,9 @@ class StaffController extends Controller
 
     // Check if the orderBy value is default and apply the default order
     if ($orderBy === 'default') {
-        $user = $query->latest()->paginate(10)->withQueryString();
+        $user = $query->latest()->paginate(8)->withQueryString();
     } else {
-        $user = $query->orderBy('fname', $orderBy)->paginate(10)->withQueryString();
+        $user = $query->orderBy('fname', $orderBy)->paginate(8)->withQueryString();
     }
 
     if ($searchQuery && $user->isEmpty()) {

@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\LeaveRequest;
 use App\Models\Task;
 use App\Models\User;
 use App\Models\TaskStatus;
+use App\Models\LeaveRequest;
+use App\Models\LoginHistory;
 use Illuminate\Http\Request;
 
 class AdminController extends Controller
@@ -42,12 +43,23 @@ class AdminController extends Controller
         $overallLeaveCount = LeaveRequest::count();
         $pendingLeave = LeaveRequest::where('status', 'pending')->count();
         $rejectedLeave = LeaveRequest::where('status', 'rejected')->count();
-        $approveLeave = LeaveRequest::where('status', 'approved')->count();                
+        $approveLeave = LeaveRequest::where('status', 'approved')->count();
+        
+          // Fetch login history for admins and users
+    $adminLoginHistory = LoginHistory::with('user')->whereHas('user', function ($query) {
+        $query->where('usertype', 'admin');
+    })->latest()->paginate(10);
+
+    $userLoginHistory = LoginHistory::with('user')->whereHas('user', function ($query) {
+        $query->where('usertype', 'user');
+    })->latest()->paginate(10);
     
-        return view('admin.dashboard', compact('overallUsersCount', 'pendingTasksCount', 'acceptedTasksCount', 'completedTasksCount', 'approveLeave', 'pendingLeave', 'rejectedLeave', 'overallLeaveCount', 'usersByJobrole', 'overallTasksCount', 'successMessage', 'rejectedTasksCount'));
+        return view('admin.dashboard', compact('adminLoginHistory', 'userLoginHistory','overallUsersCount', 'pendingTasksCount', 'acceptedTasksCount', 'completedTasksCount', 'approveLeave', 'pendingLeave', 'rejectedLeave', 'overallLeaveCount', 'usersByJobrole', 'overallTasksCount', 'successMessage', 'rejectedTasksCount'));
     }
 
     public function user(){
         return view('admin.user');
     }
+
+    
 }

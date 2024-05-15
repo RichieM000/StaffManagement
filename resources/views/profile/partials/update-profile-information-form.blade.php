@@ -18,7 +18,7 @@
         @method('PUT')
 
         <div>
-            <x-input-label for="name" :value="__('Name')" />
+            <x-input-label for="fname" :value="__('Name')" />
             <x-text-input id="fname" name="fname" type="text" class="mt-1 block w-full" :value="old('fname', $user->fname)" required autofocus autocomplete="fname" />
             <x-input-error class="mt-2" :messages="$errors->get('fname')" />
         </div>

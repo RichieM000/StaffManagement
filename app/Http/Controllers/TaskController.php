@@ -22,20 +22,24 @@ class TaskController extends Controller
         $tasks = Task::all();
         // Perform the search query
       // Perform the search query
+     
     $query = Task::query();
-
+    
     if ($searchQuery) {
         $query->where(function ($q) use ($searchQuery) {
-            $q->where('fname', 'like', "%{$searchQuery}%")
-                ->orWhere('lname', 'like', "%{$searchQuery}%");
+            $q->whereHas('assignedTo', function ($subQ) use ($searchQuery) {
+                $subQ->where('fname', 'like', "%{$searchQuery}%");
+                   
+            })->orWhere('title', 'like', "%{$searchQuery}%");
         });
     }
 
     // Check if the orderBy value is default and apply the default order
     if ($orderBy === 'default') {
-        $tasks = $query->latest()->paginate(10)->withQueryString();
+        $tasks = $query->latest()->paginate(8)->withQueryString();
     } else {
-        $tasks = $query->orderBy('title', $orderBy)->paginate(10)->withQueryString();
+        $tasks = Task::with('assignedTo')->join('users', 'tasks.assigned_to', '=', 'users.id')->orderBy('users.fname', $orderBy)->paginate(8)->withQueryString();
+
     }
     
         if ($searchQuery && $tasks->isEmpty()) {
@@ -70,7 +74,7 @@ class TaskController extends Controller
    {
      
        // Assuming you have a way to retrieve staff members with their job roles
-       $staffWithRoles = User::where('usertype', '!=', 'admin')->get();
+       $staffWithRoles = User::whereNotIn('usertype', ['admin','systemadmin'])->get();
 
    
        // Filter staff members based on job roles (e.g., 'Kapitan', 'Secretary', etc.)
@@ -119,8 +123,10 @@ Task::create([
 // Assign task to selected staffs based on last name priority
 
 $selectedStaffs = User::whereIn('lname', $validatedData['staffs'])
-    ->where('usertype', '!=', 'admin')
+    ->whereNotIn('usertype', ['admin', 'systemadmin'])
     ->get();
+
+   
 
 foreach ($selectedStaffs as $selectedStaff) {
     Task::create([
@@ -276,7 +282,9 @@ public function userTask()
     // Retrieve tasks assigned to the user's task statuses
     $tasks = $user->tasks()->get(); // Extract the task from the task status collection
 
-    return view('task', compact('user', 'tasks'));
+    $userTasks = auth()->user()->tasks;
+
+    return view('task', compact('user', 'tasks', 'userTasks'));
 }
 
   public function accept($id)
@@ -342,23 +350,38 @@ public function reject(Request $request)
 //       return redirect()->back()->with('success', 'Task rejected successfully.');
 //   }
 
-public function complete($id)
+public function complete(Request $request, $id)
 {
     $task = Task::findOrFail($id);
 
     // Find the latest status for the task
     $latestStatus = Task::where('id', $task->id)->latest()->first();
 
-    if ($latestStatus) {
-        // Update the latest status to 'completed'
-        $latestStatus->status = 'completed';
-        $latestStatus->save();
+    if (!$latestStatus) {
+        return redirect()->back()->with('error', 'Task not found!');
+    }
 
-        return redirect()->back()->with('success', 'Task Completed Successfully!');
+    // Update the latest status to 'completed'
+    $latestStatus->status = 'completed';
+    $latestStatus->save();
+
+    // Handle file upload if submitted
+    if ($request->hasFile('file')) {
+        // Store the uploaded file
+        $uploadedFile = $request->file('file');
+        $filePath = $uploadedFile->store('files', 'public'); // 'local' is the disk name (configured in filesystems.php)
+
+        // Create a new file record in the database
+        $task->file_path = $filePath;
+        $task->save();
+
+        return redirect()->back()->with('success', 'Task Completed Successfully with File Upload!');
+    }
+
+    return redirect()->back()->with('success', 'Task Completed Successfully!');
 
     
 }
 
 }
 
-}

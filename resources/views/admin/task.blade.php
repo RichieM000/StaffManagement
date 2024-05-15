@@ -1,9 +1,9 @@
 <x-app-layout>
-    <x-slot name="header">
+    {{-- <x-slot name="header">
         <h2 class="font-semibold text-xl text-center text-gray-800 leading-tight">
             {{ __('Admin Dashboard') }}
         </h2>
-    </x-slot>
+    </x-slot> --}}
 
     <!-- Main content with sidebar -->
     <div class="flex">
@@ -45,7 +45,7 @@
                     @endif
                     <div class="flex justify-between mt-4">
                     <form action="{{ route('admin.task') }}" method="GET" class="mb-4">
-                        <input type="text" name="search" placeholder="Search Staff..." value="{{ request()->input('search') }}" class="px-3 py-1 border border-gray-300 rounded-md">
+                        <input type="text" name="search" placeholder="Search Task..." value="{{ request()->input('search') }}" class="px-3 py-1 border border-gray-300 rounded-md">
                         <button type="submit" class="bg-blue-500 text-white px-4 ml-2 py-1 rounded-md hover:bg-hover">Search</button>
                     </form>
 
@@ -72,17 +72,20 @@
 
         
                     <div class="bg-white transition duration-300 ease-in-out shadow-md mt-4 rounded-lg overflow-x-auto">
-                        <div class="overflow-x-auto">
-                            <table class="w-full table-auto" id="staffTable">
+                       
+                        <div class="overflow-x-auto w-full p-4">
+                            <table class="responsive border-x-2" id="taskTable">
                                 <!-- Table headers -->
-                                <thead>
-                                    <tr class="bg-gray-200 text-gray-700 uppercase text-sm font-medium leading-normal">
+                                <thead class="bg-gray-800 text-white">
+                                    <tr class="uppercase text-sm font-medium leading-normal">
                                         <!-- Existing headers -->
+                                        <th class="px-4 py-2 whitespace-nowrap">#</th>
                                         <th class="px-4 py-2 whitespace-nowrap">Name</th>
                                         <th class="px-4 py-2 whitespace-nowrap">Task Title</th>
                                         <th class="px-4 py-2 whitespace-nowrap">Description</th>
                                         <th class="px-4 py-2 whitespace-nowrap">Deadline</th>
-                                        <th class="px-4 py-2 whitespace-nowrap">Departments</th>
+                                        <th class="px-4 py-2 whitespace-nowrap">Position</th>
+                                        <th class="px-4 py-2 whitespace-nowrap">File Uploads</th>
                                         {{-- <th class="px-4 py-2 whitespace-nowrap">Kagawad Committee</th> --}}
                                         <th class="px-4 py-2 whitespace-nowrap">Status</th>
                                         <th class="px-4 py-2 whitespace-nowrap">Reject Reason</th>
@@ -99,14 +102,26 @@
                                        
                                     </tr>
                                 </thead>
-                                <tbody class="text-gray-600 text-sm font-light">
-                                   
+                                <tbody class="text-gray-600 text-sm font-semibold">
+                                   @php $counter = 1 @endphp
                                     @foreach ($tasks as $task)
                                     <tr class="border-b border-gray-200 transition duration-300 ease-in-out text-center hover:bg-gray-100">
-                                        <td class="px-4 py-2 whitespace-nowrap">{{ $task->assignedTo->fname }}</td>
-                                        <td class="px-4 py-2 whitespace-nowrap">{{ $task->title }}</td>
+                                        <td style="text-align: center" class="px-4 py-2">{{ $counter++ }}.</td>
+                                        <td class="px-4 py-2 whitespace-nowrap capitalize">{{ $task->assignedTo->fname }}</td>
+                                        <td class="px-4 py-2 whitespace-nowrap capitalize">{{ $task->title }}</td>
                                         <td class="px-4 py-2 whitespace-nowrap">{{ $task->description }}</td>
-                                        <td class="px-4 py-2 whitespace-nowrap">{{ \Carbon\Carbon::parse($task->deadline)->format('Y-m-d') }}</td>
+                                        <?php
+                                       
+
+                                        // Assuming $attendance->date is already a valid date string or Carbon instance
+                                        $attendanceDate = \Carbon\Carbon::parse($task->date);
+
+                                        // Format the date as "Month-Day-Year"
+                                        $formattedDate = $attendanceDate->format('M d, Y');
+
+                                        // Now you can use $formattedDate in your view:
+                                        echo '<td class="px-4 py-2 whitespace-nowrap">' . $formattedDate . '</td>';
+                                        ?>
                                         <td class="px-4 py-2 whitespace-wrap max-w-60">
                                             {{-- <div class="flex flex-nowrap"> --}}
                                             @foreach($task->jobRoles() as $jobRole)
@@ -116,6 +131,18 @@
                                                 @endif
                                             @endforeach
                                         {{-- </div> --}}
+                                        </td>
+                                        <td>
+                                            @if ($task->file_path)
+                                            @if (Storage::disk('public')->exists($task->file_path))
+                                                <a href="{{ Storage::url($task->file_path) }}" class="underline text-blue-500" target="_blank">Download File</a>
+                                            @else
+                                                File not found
+                                            @endif
+                                        @else
+                                            No files
+                                        @endif
+
                                         </td>
                                         {{-- <td class="px-4 py-2 whitespace-nowrap">{{ $task->kagawad_committee_on }}</td> --}}
 
@@ -150,14 +177,32 @@
                                  
                                 </tbody>
                             </table>
-                            
+                            <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+                            <script src="https://cdn.datatables.net/2.0.6/js/dataTables.js"></script>
+                            <script src="https://cdn.datatables.net/buttons/3.0.2/js/dataTables.buttons.js"></script>
+                            {{-- <script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.dataTables.js"></script> --}}
+                            <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+                            {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script> --}}
+                            <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+                            <script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.html5.min.js"></script>
+                            <script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.print.min.js"></script>
+                            <script>
+                                new DataTable('#taskTable', {
+                                    responsive: true,
+                                            layout: {
+                                                topStart: {
+                                                    buttons: ['copy', 'csv', 'excel', 'print']
+                                                }
+                                            }
+                                        });
+                            </script>
                         </div>
                     </div>
                     <!-- Pagination links -->
-                    <div class="mt-4">
+                    {{-- <div class="mt-4">
                         {{ $tasks->appends(['order_by' => $orderBy])->links() }}
 
-                    </div>
+                    </div> --}}
                 </div>
             </div>
         </div>

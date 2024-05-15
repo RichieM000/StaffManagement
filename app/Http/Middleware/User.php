@@ -18,6 +18,7 @@ class User
     {
         if(Auth::user()->usertype != 'user'){
             return redirect('admin/dashboard');
+            return redirect('systemadmin/dashboard');
         }
         
         

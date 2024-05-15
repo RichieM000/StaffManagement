@@ -8,7 +8,7 @@
     <!-- Main content with sidebar -->
     <div class="flex">
         <x-user-sidebar /> <!-- Include the sidebar component -->
-        <div class="flex-1 p-4">
+        <div class="flex-1 p-4 overflow-y-auto">
 
             @if(session('success'))
             <div id="successMessage" class="bg-green-100 transition duration-300 ease-in-out border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
@@ -25,58 +25,50 @@
             @endif
 
             <div class="container mt-8">
-                <form action="/leave/{{$user->id}}/fileleave" method="POST" class="max-w-md mx-auto">
+                <form action="/leave/{{ $user->id }}/fileleave" method="POST" class="max-w-md mx-auto bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
                     @csrf
-                    <!-- Task Title -->
-                   
-                   
-    
-                    {{-- <div class="mb-4">
-                        <label for="fname" class="block font-medium text-sm text-gray-700">Firstname</label>
-                        <input type="text" name="fname" id="fname" class="mt-1 p-2 borderoverflow-y-auto border-gray-300 rounded-md w-full" required>
-                    </div>
+                
+                    <!-- Type of Leave -->
                     <div class="mb-4">
-                        <label for="lname" class="block font-medium text-sm text-gray-700">Lastname</label>
-                        <input type="text" name="lname" id="lname" class="mt-1 p-2 borderoverflow-y-auto border-gray-300 rounded-md w-full" required>
-                    </div> --}}
-                    <div class="mb-4 col-span-2">
-                        <x-input-label for="leave_type" :value="__('Type of Leave')" />
-                        <select name="leave_type" id="leave_type" class="mt-1 p-2 borderoverflow-y-auto border-gray-300 rounded-md w-full" required>
-                            {{-- <option class="opacity-5">--Select Type Of Leave--</option> --}}
+                        <label for="leave_type" class="block text-sm font-medium text-gray-700">Type of Leave:</label>
+                        <select name="leave_type" id="leave_type" class="form-select block w-full mt-1 p-2 border border-gray-300 rounded-md" required>
+                            @if (Auth::user()->gender == 'female')
+                                <option value="Maternity Leave">Maternity Leave</option>
+                             @endif
+
+                             @if (Auth::user()->gender == 'male')
                             <option value="Paternity Leave">Paternity Leave</option>
-                            <option value="Maternity Leave">Maternity Leave</option>
+                            @endif
                             <option value="Casual Leave">Casual Leave</option>
                             <option value="Sick Leave">Sick Leave</option>
                             <option value="Annual Leave">Annual Leave</option>
                         </select>
+                    </div>
+                
+                    <!-- Start and End Date -->
+                    <div class="grid grid-cols-2 gap-3 mb-6">
+                        <div>
+                            <label for="start_date" class="block text-sm font-medium text-gray-700">Start Date:</label>
+                            <input type="date" name="start_date" id="start_date" class="form-input block w-full mt-1 p-2 border border-gray-300 rounded-md" required>
                         </div>
-                             
-
-                        <div class="grid grid-cols-2 gap-3">
-                     <div class="mb-6">
-                        <label for="deadline" class="block font-medium text-sm text-gray-700">Start Date:</label>
-                        <input type="date" name="start_date" id="deadline" class="mt-1 p-2 borderoverflow-y-auto border-gray-300 rounded-md w-full" required>
+                        <div>
+                            <label for="end_date" class="block text-sm font-medium text-gray-700">End Date:</label>
+                            <input type="date" name="end_date" id="end_date" class="form-input block w-full mt-1 p-2 border border-gray-300 rounded-md" required>
+                        </div>
                     </div>
-
-                    <div class="mb-6">
-                        <label for="deadline" class="block font-medium text-sm text-gray-700">End Date:</label>
-                        <input type="date" name="end_date" id="deadline" class="mt-1 p-2 borderoverflow-y-auto border-gray-300 rounded-md w-full" required>
-                    </div>
-                </div>
-                   
-                    <!-- Task Description -->
+                
+                    <!-- Leave Reason -->
                     <div class="mb-4">
-                        <label for="reason" class="block font-medium text-sm text-gray-700">Leave Reason:</label>
-                        <textarea name="reason" id="reason" rows="3" class="mt-1 p-2 borderoverflow-y-auto border-gray-300 rounded-md w-full" required></textarea>
+                        <label for="reason" class="block text-sm font-medium text-gray-700">Leave Reason:</label>
+                        <textarea name="reason" id="reason" rows="3" class="form-textarea block w-full mt-1 p-2 border border-gray-300 rounded-md" required></textarea>
                     </div>
-    
-                    
-                    <!-- Task Submission Button -->
+                
+                    <!-- Submission Button -->
                     <div class="flex justify-end">
                         <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Create</button>
                     </div>
-                    
                 </form>
+                
             </div>
             
     

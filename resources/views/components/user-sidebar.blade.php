@@ -1,6 +1,6 @@
 <!-- resources/views/components/sidebar.blade.php -->
 
-<aside class="bg-gray-800 mr-8 text-white h-screen min-w-72 flex flex-col">
+<aside class="bg-gray-800 mr-8 text-white max-w-sm flex flex-col flex-grow min-h-screen">
     
     {{-- Logo/Header --}}
     <div class="p-4">
@@ -14,7 +14,7 @@
                 </a>
 
             <li>
-                <a href=""  class=" transition duration-300 ease-in-out block py-2 px-4 hover:bg-gray-700 "><i class="ri-calendar-schedule-fill"></i> Attendance & Time</a>
+                <a href="{{ route('index.clock')}}"  class=" transition duration-300 ease-in-out block py-2 px-4 hover:bg-gray-700 @if(request()->route()->getName() == 'index.clock') bg-gray-700 @endif "><i class="ri-calendar-schedule-fill"></i> Attendance & Time</a>
             </li>
             <li>
                 <a href="{{ route('user.task') }}" class="block py-2 px-4 transition duration-300 ease-in-out hover:bg-gray-700 @if(request()->route()->getName() == 'user.task') bg-gray-700 @endif"><i class="ri-task-fill"></i> Task</a>
@@ -29,7 +29,15 @@
                 <a href="" class="block py-2 px-4 transition duration-300 ease-in-out hover:bg-gray-700"><i class="ri-team-fill"></i> Departments & Teams</a>
             </li>
            
-         
+            <li>
+                <form id="logoutForm" method="POST" action="{{ route('logout') }}">
+                    @csrf
+            
+                    <a href="#" class="block py-2 px-4 transition duration-300 ease-in-out hover:bg-gray-700" onclick="event.preventDefault(); document.getElementById('logoutForm').submit();">
+                        <i class="ri-logout-box-r-fill"></i> Logout
+                    </a>
+                </form>
+            </li>
         
             <!-- Add more sidebar menu items as needed -->
         </ul>
