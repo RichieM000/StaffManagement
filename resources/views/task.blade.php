@@ -8,7 +8,7 @@
     <!-- Main content with sidebar -->
     <div class="flex">
         <x-user-sidebar /> <!-- Include the sidebar component -->
-        <div class="flex-1 p-4">
+        <div class="flex-1 p-4 overflow-y-auto">
 
             @if(session('success'))
             <div id="successMessage" class="bg-green-100 transition duration-300 ease-in-out border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
@@ -23,11 +23,35 @@
                 }, 3000); // Adjust the timeout value as needed (in milliseconds)
             </script>
             @endif
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+          const calendarEl = document.getElementById('calendar')
+          const calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            events: [
+            @foreach($userTasks as $task)
+            {
+                title: '{{ $task->title }}',
+                start: '{{ $task->deadline }}', // Assuming deadline is a valid date format
+                color: '#3788d8', // Set a color for the task deadline
+                url: '{{ route('user.task', $task->id) }}' // Optional: link to task detail
+            },
+            @endforeach
+        ]
+          });
+          calendar.render()
+        });
+      
+                </script>
 
-        <div class="container mx-auto px-4 py-8">
+        <div class="container m-auto px-4 py-8">
+             <div class="bg-white rounded-lg max-w-xl mx-auto shadow-md mb-4 p-4">
+                <h1>Task Deadline</h1>
+                    <div class="" id='calendar'></div>
+                </div>
             <h1 class="text-2xl font-bold mb-4">My Tasks</h1>
             
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-4 p-4">
+            <div class="bg-white shadow-sm sm:rounded-lg mb-4 p-4">
                 @if($tasks->isEmpty())
     <p>Empty Task</p>
 @else
@@ -37,7 +61,7 @@
                         <div class="text-xl font-semibold text-blue-900">{{ $task->title }}</div>
                         <div class="text-gray-700">{{ $task->description }}</div>
                         <div class="text-sm text-gray-600">Job Role: {{ $task->jobrole }}</div>
-                        <div class="text-sm text-gray-600">Committee On: {{ $task->kagawad_committee_on }}</div>
+                        <div class="text-sm text-gray-600">Committee On: {{ $task->assignedTo->kagawad_committee_on }}</div>
                         <div class="text-sm text-gray-600">Deadline: {{ \Carbon\Carbon::parse($task->deadline)->format('Y-m-d') }}</div>
                     </div>
                     <div class="mt-4 flex justify-end flex-col items-center">
@@ -46,11 +70,11 @@
                             @if ($task->status === 'in_progress')
                            
                                 <span class="text-green-500 mr-2.5">In Progress</span>
-                                <form action="{{ route('task.complete', ['id' => $task->id]) }}" method="POST">
+                                <form action="{{ route('task.complete', ['id' => $task->id]) }}" method="POST" enctype="multipart/form-data">
                                     @csrf
-                                    <div class="flex flex-col text-sm items-center mt-4">
-                                        <div>
-                                            <label for="file">File:</label>
+                                <div class="flex flex-col text-sm items-center mt-4">
+                                    <div>
+                                        <label for="file">Upload File:</label>
                                         <input type="file" id="file" name="file" class="border w-56 rounded-md px-2 py-1">
                                     </div>
                                         <button type="submit" class="bg-green-500 mt-2 hover:bg-green-600 text-white px-3 py-1 rounded-md">Complete</button>
@@ -76,12 +100,13 @@
                         
                     </div>
                 </div>
-          
+                @endforeach
             </div>
-
+           
     </div>
    
       <!-- Reject Modal -->
+      @foreach($tasks as $task)
       <div id="rejectModal" class="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75 hidden">
         <div class="bg-white p-6 rounded-lg shadow-lg">
             <h2 class="text-lg font-semibold mb-4">Reject Task</h2>

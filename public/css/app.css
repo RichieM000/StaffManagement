@@ -1,11 +1,39 @@
-.sort-icon {
-    margin-left: 5px;
+/*  */
+body{
+    background-color: aqua;
+}
+/* Style the DataTables entries per page dropdown */
+.dataTables_length {
+    margin-bottom: 10px; /* Adjust the spacing as needed */
 }
 
-.sort-icon.asc::after {
-    content: '▲'; /* Up arrow for ascending order */
+/* Style the dropdown button */
+.dataTables_length select {
+    padding: 5px 10px; /* Adjust padding as needed */
+    border-radius: 5px; /* Add border-radius for rounded corners */
+    border: 1px solid #ccc; /* Add border for visual separation */
+    background-color: #fff; /* Set background color */
+    color: #333; /* Set text color */
 }
 
-.sort-icon.desc::after {
-    content: '▼'; /* Down arrow for descending order */
+/* Style the dropdown arrow */
+.dataTables_length select::after {
+    content: '\25BC'; /* Unicode for down arrow */
+    position: absolute;
+    right: 10px; /* Adjust position as needed */
+    top: 50%; /* Center vertically */
+    transform: translateY(-50%);
 }
+
+/* Style the dropdown options */
+.dataTables_length select option {
+    background-color: #fff; /* Set background color */
+    color: #333; /* Set text color */
+}
+#dropdown-menu {
+    display: none;
+  }
+  
+  #dropdown-toggle:hover #dropdown-menu {
+    display: block;
+  }

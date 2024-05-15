@@ -1,9 +1,5 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-center text-gray-800 leading-tight">
-            {{ __('Admin Dashboard') }}
-        </h2>
-    </x-slot>
+   
 
     <!-- Main content with sidebar -->
     <div class="flex">
@@ -53,9 +49,9 @@
                     </div>
                     
                     <div class="mb-4 col-span-2">
-                        <x-input-label for="jobrole" :value="__('Job Role')" />
+                        <x-input-label for="jobrole" :value="__('Job Position')" />
                         <select name="jobrole" id="jobrole" class="mt-1 p-2 borderoverflow-y-auto border-gray-300 rounded-md w-full" required>
-                            <option>--Select Job Role--</option>
+                            <option>--Select Position--</option>
                             <option value="Chairman">Chairman</option>
                             <option value="Secretary">Secretary</option>
                             <option value="Treasurer">Treasurer</option>
@@ -191,6 +187,7 @@
                 </form>
             </div>
         </div>
+    </div>
 </x-app-layout>
 
 

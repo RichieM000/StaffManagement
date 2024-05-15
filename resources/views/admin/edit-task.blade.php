@@ -20,9 +20,9 @@
                 @method('PUT')
                 <!-- Task Title -->
                 <div class="mb-4 col-span-2">
-                    <x-input-label for="jobrole" :value="__('Job Role')" />
+                    <x-input-label for="jobrole" :value="__('Job Position')" />
                     <select name="jobrole" id="jobrole" value="{{ old('jobrole', $task->jobrole) }}" class="mt-1 p-2 borderoverflow-y-auto border-gray-300 rounded-md w-full">
-                        <option>--Select Job Role--</option>
+                        <option>--Select Position--</option>
                         <option value="Chairman">Chairman</option>
                         <option value="Secretary">Secretary</option>
                         <option value="Treasurer">Treasurer</option>

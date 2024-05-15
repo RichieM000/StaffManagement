@@ -22,7 +22,7 @@ class RegisteredUserController extends Controller
      */
     public function create(): View
     {
-        return view('auth.register');
+        return view('admin.register');
     }
 
     /**
@@ -96,10 +96,10 @@ if($user->kagawad_committee_on === null){
 
      
 
-        event(new Registered($user));
+        // event(new Registered($user));
 
-        Auth::login($user);
+        // Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        return redirect()->route('admin.staff')->with('success', 'Staff Registered Successfully');
     }
 }

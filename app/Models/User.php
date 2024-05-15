@@ -21,6 +21,7 @@ class User extends Authenticatable
         'kagawad_committee_on',
         'email',
         'phone',
+        'usertype',
         'password',
     ];
 
@@ -71,6 +72,26 @@ public function leaveRequest()
 public function assignedTo()
 {
     return $this->hasMany(Task::class, 'assigned_to');
+}
+
+public function userid()
+{
+    return $this->hasMany(Attendance::class, 'user_id');
+}
+
+
+public function attendances(){
+    
+    return $this->hasMany(Attendance::class);
+}
+
+public function loginHistories()
+{
+    return $this->hasMany(LoginHistory::class);
+}
+
+public function evaluation(){
+    return $this->hasMany(Evaluation::class);
 }
 
 }

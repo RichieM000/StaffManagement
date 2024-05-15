@@ -97,7 +97,13 @@ public function delete($leaveRequest)
 
         $admin = auth()->user()->usertype === 'admin';
 
-        $orderBy = $request->input('order_by', 'default');
+      
+
+        $orderBy = $request->input('order_by', 'default'); // Default order is ascending
+
+      
+    
+        $leaves = LeaveRequest::all();
          // Default order is ascending
         $searchQuery = $request->input('search');
 
@@ -121,7 +127,7 @@ public function delete($leaveRequest)
     if ($orderBy === 'default') {
         $leaveRequests = $query->latest()->paginate(10)->withQueryString();
     } else {
-        $leaveRequests = $query->orderBy('leave_type', $orderBy)->paginate(10)->withQueryString();
+         $leaveRequests = $query->orderBy('leave_type', $orderBy)->paginate(10)->withQueryString();
     }
 
     if ($searchQuery && $leaveRequests->isEmpty()) {
@@ -135,7 +141,7 @@ public function delete($leaveRequest)
         $approvedRequests = LeaveRequest::where('status', 'approved')->get();
         $rejectedRequests = LeaveRequest::where('status', 'rejected')->get();
 
-        return view('admin.leave', compact('admin', 'orderBy', 'leaveRequests', 'pendingRequests','approvedRequests','rejectedRequests'));
+        return view('admin.leave', compact('admin', 'leaves', 'orderBy', 'leaveRequests', 'pendingRequests','approvedRequests','rejectedRequests'));
     }
 
     public function approveLeaveRequest(Request $request, $id)

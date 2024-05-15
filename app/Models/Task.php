@@ -9,7 +9,7 @@ class Task extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'user_id', 'description', 'deadline', 'jobrole', 'assigned_to', 'status','rejected_reason'];
+    protected $fillable = ['title', 'user_id', 'description', 'deadline', 'file_path', 'jobrole', 'assigned_to', 'status','rejected_reason'];
     protected $dates = ['deadline'];
 
     public function assignedTo()
@@ -42,5 +42,8 @@ public function users()
 public function taskStatus()
 {
     return $this->hasMany(TaskStatus::class);
+}
+public function evaluation(){
+    return $this->hasMany(Evaluation::class);
 }
 }
