@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\Task;
 use App\Models\User;
 use App\Models\Staff;
@@ -10,6 +11,7 @@ use Illuminate\Http\Request;
 
 class TaskController extends Controller
 {
+    
 
     public function index(Request $request)
     {
@@ -17,7 +19,6 @@ class TaskController extends Controller
         $searchQuery = $request->input('search');
         
 
-      
 
         $tasks = Task::all();
         // Perform the search query
@@ -281,6 +282,13 @@ public function userTask()
 
     // Retrieve tasks assigned to the user's task statuses
     $tasks = $user->tasks()->get(); // Extract the task from the task status collection
+    
+    foreach ($tasks as $task) {
+        if (Carbon::parse($task->deadline)->isPast() && $task->status != 'exceeded deadline') {
+            $task->status = 'exceeded deadline';
+            $task->save();
+        }
+    }
 
     $userTasks = auth()->user()->tasks;
 

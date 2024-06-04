@@ -20,9 +20,12 @@ class WorkSchedule extends Model
         return $this->belongsTo(Staff::class);
     }
 
-    public function users()
+    public function user()
     {
         return $this->belongsTo(User::class);
+    }
+    public function attendance(){
+        return $this->belongsTo(Attendance::class, 'user_id');
     }
 }
 

@@ -76,6 +76,18 @@ class AttendanceController extends Controller
             'clock_in' => $now->toTimeString(),
         ]);
 
+        $workSchedule = auth()->user()->workSchedules->first();
+
+        if($workSchedule){
+            $startTime = $workSchedule->start_time;
+
+            if($now->gt($startTime)){
+                $attendance->update(['status' => 'late']);
+            }else{
+                $attendance->update(['status' => 'on-time']);
+            }
+        }
+
         // Assuming you want to return a JSON response for AJAX requests
         if ($request->ajax()) {
             return response()->json(['message' => 'Clocked in successfully'], 200);
@@ -114,11 +126,17 @@ class AttendanceController extends Controller
     // User SIDE!
 
     public function clockrecord(){
-        $attendances = auth()->user()->attendances()->get();
+        $attendances = auth()->user()->attendances()->latest()->get();
 
-
-        
         return view('attendance', compact('attendances'));    
+    }
+
+    public function destroyrecord($id){
+        $attendances = Attendance::findOrFail($id);
+        $attendances->delete();
+
+        return redirect()->route('index.clock')->with('delete', 'Attendance Details Deleted');
+
     }
 
 

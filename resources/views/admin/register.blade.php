@@ -9,7 +9,7 @@
                 {{-- <a href="{{route('admin.staff')}}" class="bg-button px-6 py-1 text-white rounded-md hover:bg-hover">Back</a> --}}
             </div>
             <div class="bg-white shadow-md rounded-lg p-6 mx-auto">
-                <form method="POST" action="{{ route('register.store') }}" class="grid grid-cols-2 gap-3">
+                <form method="POST" action="{{ route('adminregister') }}" class="grid grid-cols-2 gap-3">
         @csrf
        
         <!-- Name -->

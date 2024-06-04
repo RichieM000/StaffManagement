@@ -20,7 +20,7 @@
                     <div id="successMessage" class="bg-green-100 transition duration-300 ease-in-out border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
                         <strong class="font-bold">Success!</strong>
                         <span class="block sm:inline">{{ session('success') }}</span>
-                    </div>
+                    </div>  
                 
                     <script>
                         // Automatically hide the success message after 5 seconds (5000 milliseconds)
@@ -109,11 +109,12 @@
                     <td class="px-4 py-2 whitespace-nowrap capitalize">{{ $task->assignedTo->fname }}</td>
                     <td class="px-4 py-2 whitespace-nowrap capitalize">{{ $task->title }}</td>
                     <td class="px-4 py-2 whitespace-nowrap">{{ $task->description }}</td>
+                  
                     <?php
                    
 
                     // Assuming $attendance->date is already a valid date string or Carbon instance
-                    $attendanceDate = \Carbon\Carbon::parse($task->date);
+                    $attendanceDate = \Carbon\Carbon::parse($task->deadline);
 
                     // Format the date as "Month-Day-Year"
                     $formattedDate = $attendanceDate->format('M d, Y');
@@ -121,6 +122,7 @@
                     // Now you can use $formattedDate in your view:
                     echo '<td style="text-align: left;" class="px-4 py-2 whitespace-nowrap">' . $formattedDate . '</td>';
                     ?>
+
                     <td class="px-4 py-2 whitespace-wrap max-w-60">
                         {{-- <div class="flex flex-nowrap"> --}}
                         @foreach($task->jobRoles() as $jobRole)
@@ -134,7 +136,7 @@
                     <td>
                         @if ($task->file_path)
                         @if (Storage::disk('public')->exists($task->file_path))
-                            <a href="{{ Storage::url($task->file_path) }}" class="underline text-blue-500" target="_blank">Download File</a>
+                            <a href="{{ Storage::url($task->file_path) }}" class="underline text-blue-500" target="_blank">Open File</a>
                         @else
                             File not found
                         @endif
@@ -144,13 +146,19 @@
 
                     </td>
                     {{-- <td class="px-4 py-2 whitespace-nowrap">{{ $task->kagawad_committee_on }}</td> --}}
-
-                    <td class="px-4 py-2 whitespace-nowrap">
+                    @if($task->status === 'exceeded deadline')
+                    <td class="px-4 text-red-500 py-2 whitespace-nowrap capitalize">
                        
                         {{ $task->status }}
                     
                     </td>
+                    @else
+                    <td class="px-4 py-2 whitespace-nowrap capitalize">
+                       
+                        {{ $task->status }}
                     
+                    </td>
+                    @endif
                     <td class="px-4 py-2 whitespace-nowrap">
                        
                         {{ $task->rejected_reason }}
@@ -160,9 +168,9 @@
                     {{-- <td class="px-4 py-2 whitespace-nowrap">{{ $task->completed ? 'Yes' : 'No' }}</td> --}}
                     <td class="py-3 px-6 text-center whitespace-nowrap flex justify-center gap-2">
                         <div>
-                            <a class="text-xl text-button hover:text-hover" href="{{ route('tasks-edit', $task->id) }}"><i class="ri-edit-fill"></i></a>
+                            <a class="text-xl text-button hover:text-hover" href="{{ route('sadmin_edittasks', $task->id) }}"><i class="ri-edit-fill"></i></a>
                         </div>
-                        <form action="{{ route('tasks-destroy', ['task' => $task->id]) }}" method="POST">
+                        <form action="{{ route('sadmin_deletetasks', ['task' => $task->id]) }}" method="POST">
                             @csrf
                             @method('DELETE')
                             <button type="submit" onclick="return confirm('Are you sure you want to delete this task assignment?')" class="text-red-500 text-xl hover:text-red-700"><i class="ri-delete-bin-fill"></i></button>

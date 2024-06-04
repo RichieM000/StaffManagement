@@ -27,6 +27,17 @@
             <x-input-error :messages="$errors->get('password')" class="mt-2" />
         </div>
 
+
+        <div class="mt-4">
+            <strong>Captcha:</strong>
+            {!! NoCaptcha::renderJs() !!}
+            {!! NoCaptcha::display() !!}
+        </div>
+        @error('g-recaptcha-response')
+        <div class="text-red-500 text-sm mt-2">Please verify that you are not a robot.</div>
+    @enderror
+        
+
         <!-- Remember Me -->
         <div class="block mt-4">
             <label for="remember_me" class="inline-flex items-center">
@@ -34,6 +45,9 @@
                 <span class="ms-2 text-sm text-gray-600 dark:text-gray-400">{{ __('Remember me') }}</span>
             </label>
         </div>
+        
+
+    
 
         <div class="flex items-center justify-end mt-4">
             @if (Route::has('password.request'))
@@ -47,4 +61,6 @@
             </x-primary-button>
         </div>
     </form>
+    {{-- {!! NoCaptcha::renderJs() !!} --}}
+
 </x-guest-layout>

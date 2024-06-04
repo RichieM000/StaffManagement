@@ -22,7 +22,7 @@
                     </h2> --}}
                     <div class="flex justify-between items-center">
                         <h1 class="text-2xl font-semibold mb-4">Time In/Time Out Monitoring</h1>
-                        <a href="{{ route('admin.add-staff') }}" class="rounded bg-green-500 p-1.5 text-white hover:bg-green-700"><i class="ri-add-large-fill"></i> Add New</a>
+                        {{-- <a href="{{ route('admin.add-staff') }}" class="rounded bg-green-500 p-1.5 text-white hover:bg-green-700"><i class="ri-add-large-fill"></i> Add New</a> --}}
                     </div>
                     @if(session('success'))
                     <div id="successMessage" class="bg-green-100 transition duration-300 ease-in-out border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
@@ -83,7 +83,7 @@
                         $monthName = date('F', mktime(0, 0, 0, $currentMonth, 1));
                         
                         // Get the number of days in the current month
-                        $numDaysInMonth = cal_days_in_month(CAL_GREGORIAN, $currentMonth, $currentYear);
+                        // $numDaysInMonth = cal_days_in_month(CAL_GREGORIAN, $currentMonth, $currentYear);
                         
                         // Sample attendance data (replace with actual data retrieval from your database)
                         // $attendanceData = [
@@ -111,8 +111,8 @@
                             $selectedMonth = isset($_GET['month']) ? $_GET['month'] : $currentMonth;
                             $selectedYear = isset($_GET['year']) ? $_GET['year'] : $currentYear;
     
-                            $selectedMonthName = $months[$selectedMonth];
-                            $numDaysInSelectedMonth = cal_days_in_month(CAL_GREGORIAN, $selectedMonth, $selectedYear);
+                            // $selectedMonthName = $months[$selectedMonth];
+                            // $numDaysInSelectedMonth = cal_days_in_month(CAL_GREGORIAN, $selectedMonth, $selectedYear);
                         @endphp
                         <form method="GET" action="{{ route('sadmin_showattendancesheet') }}" class="mt-6">
                             <label for="month">Select Month:</label>
@@ -171,7 +171,7 @@
                                             $formattedDate = $attendanceDate->format('M d Y');
     
                                             // Now you can use $formattedDate in your view:
-                                            echo '<th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">' . $formattedDate . '</th>';
+                                            echo '<th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">' . '<div>'. $formattedDate .'</div>' . '<p class="pl-2">am pm</p>' . '</th>';
                                             ?>
                                             {{-- <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">{{ $date }}</th> --}}
                                             @endforeach
@@ -195,86 +195,52 @@
                                             @endphp
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 <div class="flex text-xl font-bold items-center space-x-1">
+                                                
                                                     <div class="h-4 w-4 pl-3 flex items-center justify-center">
+                                                       
                                                         @if ($attendance && $attendance['clock_in'])
-                                                            
-                                                            <p class="text-green-500">&#10004;</p>
-                                                            
-                                                        @else
-                                                            
-                                                            <p class="text-red-500">&#10006;</p>
-                                                        @endif
+                                                        @php
+                                                        $clockInTime = Carbon\Carbon::parse($attendance['clock_in']);
+                                                        $isAM = $clockInTime->format('a') === 'am';
+                                                       
+                                                    @endphp
+                                                    
+                                                    @if ($isAM)
+                                                        <p class="text-green-500">&#10004;</p>
+                                                    @else
+                                                        <p class="text-red-500">&#10006;</p>
+                                                    @endif
+                                                @else
+                                                    <p class="text-red-500">&#10006;</p>
+                                                @endif
                                                     </div>
                                                     <div class="h-4 w-4 pl-6 flex items-center justify-center">
-                                                        @if ($attendance && $attendance['clock_out'])
-                                                            @php
-                                                                $clockOutTime = Carbon\Carbon::parse($attendance['clock_out']);
-                                                            @endphp
-                                                            @if ($clockOutTime->lt(Carbon\Carbon::parse('01:00:00')))
-                                                                
-                                                            <p class="text-red-500">&#10006;</p>
-                                                            @else
-                                                               
-                                                            <p class="text-green-500">&#10004;</p>
-                                                            @endif
-                                                        @else
-                                                           
+                                                        @if ($attendance && $attendance['clock_in'])
+                                                        @php
+                                                        $clockInTime = Carbon\Carbon::parse($attendance['clock_in']);
+                                                        
+                                                        $isPM = $clockInTime->format('a') === 'pm';
+                                                    @endphp
+                                                    @if ($isPM)
+                                                        <p class="text-green-500">&#10004;</p>
+                                                    @else
                                                         <p class="text-red-500">&#10006;</p>
-                                                        @endif
+                                                    @endif
+                                                @else
+                                                    <p class="text-red-500">&#10006;</p>
+                                                @endif
                                                     </div>
+                                                  
                                                 </div>
                                             </td>
                                         @endforeach
-                                            {{-- @foreach ($dates as $date)
-                                            @php
-                                                $check_attd = $attendanceData[$employee->id][$date]['clock_in'] ?? null;
-                                                $check_leave = $attendanceData[$employee->id][$date]['clock_out'] ?? null;
-                                            @endphp
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <div class="flex items-center space-x-1">
-                                                    <div class="h-4 w-4 flex items-center justify-center">
-                                                        @if ($check_attd)
-                                                            <i class="ri-checkbox-circle-fill text-green-500"></i>
-                                                        @else
-                                                            <i class="ri-close-circle-fill text-red-500"></i>
-                                                        @endif
-                                                    </div>
-                                                    <div class="h-4 w-4 flex items-center justify-center">
-                                                        @if ($check_leave)
-                                                            <i class="ri-checkbox-circle-fill text-green-500"></i>
-                                                        @else
-                                                            <i class="ri-close-circle-fill text-red-500"></i>
-                                                        @endif
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        @endforeach --}}
+                                           
                                         </tr>
                                         @endforeach
                                     </tbody>
                                 </table>
                             </div>
-                            <style media="print">
-                                /* Set the display property of the <i> tag to inline-block */
-                                i {
-                                  display: inline-block;
-                                }
-                              
-                                /* Override any existing styles for the <i> tag in the table cells */
-                                #attendanceTable i {
-                                  display: inline-block;
-                                }
-                              
-                                /* Set the font-family property to use a different icon font */
-                                #attendanceTable i {
-                                  font-family: "Font Awesome 5 Free";
-                                }
-                              
-                                /* Set the font-weight property to use the solid style */
-                                #attendanceTable i {
-                                  font-weight: 900;
-                                }
-                              </style>  
+                           
                                 <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
                                 <script src="https://cdn.datatables.net/2.0.6/js/dataTables.js"></script>
                                 <script src="https://cdn.datatables.net/buttons/3.0.2/js/dataTables.buttons.js"></script>

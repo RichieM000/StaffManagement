@@ -45,6 +45,7 @@
           </script>
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+        <script src="https://www.google.com/recaptcha/api.js?render={{ config('services.recaptcha.site_key') }}"></script>
     </head>
     <body class="font-ecom text-gray-900 antialiased">
        

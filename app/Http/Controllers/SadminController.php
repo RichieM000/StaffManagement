@@ -2,28 +2,35 @@
 
 namespace App\Http\Controllers;
 
+use DateTime;
 use Carbon\Carbon;
 use Rules\Password;
 use App\Models\Task;
 use App\Models\User;
+use App\Models\Admin;
 use Illuminate\View\View;
 use App\Models\Attendance;
 use App\Models\Evaluation;
+use App\Models\TaskStatus;
 use App\Models\LeaveRequest;
 use App\Models\LoginHistory;
 use App\Models\WorkSchedule;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Support\Facades\Validator;
 
 class SadminController extends Controller
 {
     public function mainindex(){
 
          // Count overall users excluding users with 'admin' usertype
-         $overallUsersCount = User::where('usertype', '!=', 'admin')->count();
+         $overallUsersCount = User::all()->count();
+         $adminsCount = User::where('usertype', 'admin')->count();
     
          // Count users in each jobrole excluding 'admin'
          $usersByJobrole = User::where('usertype', '!=', 'admin')
@@ -34,12 +41,15 @@ class SadminController extends Controller
      
          // Count overall tasks
          $overallTasksCount = Task::count();
+
+         $performancecount = Evaluation::count();
      
-          // Count rejected tasks
+          // Count tasks status
           $pendingTasksCount = Task::where('status', 'pending')->count();
           $acceptedTasksCount = Task::where('status', 'accepted')->count();
           $completedTasksCount = Task::where('status', 'completed')->count();
           $rejectedTasksCount = Task::where('status', 'rejected')->count();
+          $deadline = Task::where('status', 'exceeded deadline')->count();
          // Check if the success message exists in the session
          $successMessage = session('successMessage');
          
@@ -48,10 +58,23 @@ class SadminController extends Controller
          $pendingLeave = LeaveRequest::where('status', 'pending')->count();
          $rejectedLeave = LeaveRequest::where('status', 'rejected')->count();
          $approveLeave = LeaveRequest::where('status', 'approved')->count();
+        
+        //  
+        $timeins = Attendance::whereNotNull('clock_in')->count();
+        $timeouts = Attendance::whereNotNull('clock_out')->count();
          
     
 
-        // Fetch login history for admins and users
+       
+
+    return view('sadmin/dashboard', compact('overallUsersCount', 'timeins', 'timeouts', 'performancecount', 'deadline', 'adminsCount', 'pendingTasksCount',
+     'acceptedTasksCount', 'completedTasksCount', 'approveLeave', 'pendingLeave', 'rejectedLeave',
+      'overallLeaveCount', 'usersByJobrole', 'overallTasksCount', 'successMessage', 'rejectedTasksCount'));
+    }
+
+    public function showlogs(){
+
+         // Fetch login history for admins and users
     $adminLoginHistory = LoginHistory::with('user')->whereHas('user', function ($query) {
         $query->where('usertype', 'admin');
     })->latest()->paginate(10);
@@ -60,9 +83,17 @@ class SadminController extends Controller
         $query->where('usertype', 'user');
     })->latest()->paginate(10);
 
-    return view('sadmin/dashboard', compact('adminLoginHistory', 'userLoginHistory','overallUsersCount', 'pendingTasksCount',
-     'acceptedTasksCount', 'completedTasksCount', 'approveLeave', 'pendingLeave', 'rejectedLeave',
-      'overallLeaveCount', 'usersByJobrole', 'overallTasksCount', 'successMessage', 'rejectedTasksCount'));
+    return view('sadmin/log', compact('adminLoginHistory', 'userLoginHistory'));
+
+    }
+
+    public function clear(){
+        // Clear all logs
+        LoginHistory::query()->truncate();
+
+
+        // Return a JSON response
+        return response()->json(['success' => true]);
     }
 
     public function showstaffs(Request $request){
@@ -70,7 +101,7 @@ class SadminController extends Controller
         $searchQuery = $request->input('search');
     
         // Perform the search query
-        $query = User::query()->where('usertype', '!=', 'systemadmin');
+        $query = User::query()->whereNotIn('usertype', ['systemadmin', 'admin']);
     
         if ($searchQuery) {
             $query->where(function ($q) use ($searchQuery) {
@@ -103,7 +134,7 @@ class SadminController extends Controller
        $searchQuery = $request->input('search');
    
        // Perform the search query
-       $query = User::query()->where('usertype', '!=', 'systemadmin');
+       $query = User::query()->whereNotIn('usertype', ['systemadmin', 'admin']);
    
        if ($searchQuery) {
            $query->where(function ($q) use ($searchQuery) {
@@ -198,8 +229,9 @@ if($user->kagawad_committee_on === null){
 
     public function createadmin()
     {
+        $admins = Admin::all();
         
-        return view('sadmin/create-admin');
+        return view('sadmin/create-admin', compact('admins'));
     }
 
     public function storeadmin(Request $request): RedirectResponse
@@ -207,58 +239,21 @@ if($user->kagawad_committee_on === null){
     try{
     // Validate the incoming request data
     $validatedData = $request->validate([
-        'fname' => 'required|string|max:255',
-        'lname' => 'required|string|max:255',
-        'age' => 'required|string|max:3',
-        'gender' => 'required|string|max:255',
-        'address' => 'required|string|max:255',
-        'jobrole' => 'required|string|max:255',
-        'committee_roles' => 'array',
+        'name' => 'required|string|max:255',
         'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-        'phone' => 'nullable|string|max:11|min:11',
         'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        'day_of_week' => 'required|string|max:255', // Add validation for day_of_week
-        'start_time' => 'required|string|max:8', // Add validation for start_time (adjust as needed)
-        'end_time' => 'required|string|max:8',
-        'usertype' => 'required|string|in:user,admin',
+        'usertype' => 'required|string|in:admin',
     ]);
 
-    // Prepare user data from the request
-    $userData = $request->all();
-    $userData['password'] = Hash::make($request->password);
-
-   
-    // Check and set usertype from hidden input
-    if ($request->has('usertype') && in_array($request->usertype, ['user', 'admin'])) {
-        $userData['usertype'] = $request->usertype;
-    } else {
-        // Default to 'user' if no specific usertype is provided
-        $userData['usertype'] = 'user';
-    }
-
-    // Create the user with the validated data
-    $user = User::create($userData);
+    $userData = [
+        'name' => $validatedData['name'],
+        'email' => $validatedData['email'],
+        'password' => Hash::make($validatedData['password']),
+        'usertype' => $validatedData['usertype'],
+    ];
     
+   Admin::create($userData);
 
-    // Check if the selected job role is 'Kagawad' and process committee roles
-    if ($validatedData['jobrole'] === 'Kagawad' && $request->has('committee_roles')) {
-        $user->kagawad_committee_on = implode(',', $request->committee_roles);
-        $user->save();
-    }
-
-    // Set default value if kagawad_committee_on is still null
-    if ($user->kagawad_committee_on === null) {
-        $user->kagawad_committee_on = "None";
-        $user->save();
-    }
-
-    // Create a work schedule for the user
-    WorkSchedule::create([
-        'user_id' => $user->id,
-        'day_of_week' => $request->day_of_week,
-        'start_time' => $request->start_time,
-        'end_time' => $request->end_time,
-    ]);
 
     // Redirect with success message
     return redirect()->route('sadmin_showusers')->with('success', 'Admin Created Successfully');
@@ -267,6 +262,30 @@ if($user->kagawad_committee_on === null){
     }
 }
 
+public function updateadmin(Request $request, $id)
+{
+    $updateadmin = Admin::findOrFail($id); // Assuming you want to update an Admin model, not Evaluation
+
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|string|email|max:255|unique:admins,email,' . $updateadmin->id,
+        'password' => ['nullable', 'confirmed', Rules\Password::defaults()],
+        'usertype' => 'required|string|in:admin',
+    ]);
+
+    $updateadmin->name = $request->input('name');
+    $updateadmin->email = $request->input('email');
+
+    if ($request->filled('password')) {
+        $updateadmin->password = bcrypt($request->input('password'));
+    }
+
+    if ($updateadmin->save()) {
+        return redirect()->route('sadmin_createadmin')->with('success', 'Admin Updated Successfully');
+    } else {
+        return response()->json(['message' => 'Failed to update admin!'], 422);
+    }
+}
 
 
 public function edituser($id)
@@ -348,11 +367,23 @@ public function destroyuser(User $user)
         $searchQuery = $request->input('search');
         
 
-      
+       
 
-        $tasks = Task::all();
-        // Perform the search query
-      // Perform the search query
+        $now = Carbon::now('Asia/Manila')->startOfDay(); // Get the start of today
+        $tasks = Task::all(); // Retrieve all tasks
+        
+        foreach ($tasks as $task) {
+            $deadline = Carbon::parse($task->deadline, 'Asia/Manila')->startOfDay(); // Get the start of the deadline day
+            
+            // Check if the deadline is in the past but not today
+            if ($deadline->isPast() && !$deadline->isToday()) {
+                $task->update(['status' => 'exceeded deadline']);
+            }
+        }
+
+
+
+
      
     $query = Task::query();
     
@@ -388,7 +419,11 @@ public function destroyuser(User $user)
    {
      
        // Assuming you have a way to retrieve staff members with their job roles
-       $staffWithRoles = User::whereNotIn('usertype', ['admin', 'systemadmin'])->get();
+       $staffWithRoles = User::whereNotIn('usertype', ['admin', 'systemadmin'])
+       ->whereDoesntHave('leaveRequest', function ($query) {
+           $query->where('status', 'approved');
+       })
+       ->get();
 
    
        // Filter staff members based on job roles (e.g., 'Kapitan', 'Secretary', etc.)
@@ -544,14 +579,50 @@ public function destroytasks($task)
     return redirect()->route('sadmin_showtasks')->with('delete', 'Task deleted successfully.');
 }
 
-
+// foreach ($tasks as $task) {
+//     if (Carbon::parse($task->deadline)->isPast() && $task->status != 'exceeded deadline') {
+//         $task->status = 'exceeded deadline';
+//         $task->save();
+//     }
+// }
 
    public function showattendance(){
+    $attendances = Attendance::latest()->get();
 
+   
+    
+      
     
 
-    $attendances = Attendance::all();
+        // if ($workSchedule) {
+        //     $start_time = $workSchedule->start_time;
+        //     $clock_in_time = $attendance->clock_in_time;
+
+        //     // Assuming start_time and clock_in_time are stored as time strings
+        //     // and converting them to DateTime objects for comparison
+        //     $startDateTime = new DateTime($start_time);
+        //     $clockInDateTime = new DateTime($clock_in_time);
+
+        //     if ($clockInDateTime > $startDateTime) {
+        //         $attendance->status = 'late';
+        //     } else {
+        //         $attendance->status = 'on-time';
+        //     }
+        // } 
+    
+
+
     return view('sadmin/attendance', compact('attendances'));
+
+   }
+
+   public function destroyattendance($id){
+
+    $attendance = Attendance::findOrFail($id);
+    $attendance ->delete();
+
+    return redirect()->route('sadmin_showattendance')->with('delete', 'Attendance Details Deleted');
+
    }
 
    public function showattendancesheet(Request $request)
@@ -687,12 +758,20 @@ public function approveleave(Request $request, $id)
     // evaluation
 
     public function index(){
-        $evaluations = Evaluation::with(['user', 'task'])->get();
+        $evaluations = Evaluation::with(['user', 'task'])->latest()->get();
+        
         return view('sadmin/evaluation', compact('evaluations'));
     }
 
-    public function addevaluation(){
-        $tasks = Task::all();
+    public function addevaluation(Request $request){
+        $user = User::find($request->fname);
+
+        if ($user) {
+            $tasks = $user->tasks;
+        } else {
+            $tasks = [];
+        }
+       
         $staff = User::whereNotIn('usertype', ['admin', 'systemadmin'])->latest()->get();
         return view('sadmin/add-evaluation', compact('tasks','staff'));
     }
@@ -737,6 +816,88 @@ public function approveleave(Request $request, $id)
         return redirect()->route('sadmin_evaluation')->with('success', 'Rating submitted successfully!');
 
     }
+
+
+    public function editevaluation($evaluation){
+
+        $evaluation = Evaluation::with('user', 'task') // eager load user and task relationships
+        ->findOrFail($evaluation);
+        $staff = User::whereNotIn('usertype', ['admin', 'systemadmin'])->latest()->get();
+        $task = Task::all();
+
+        return view('sadmin.edit-evaluation', compact('evaluation','staff','task'));
+    }
+
+    public function updateevaluation(Request $request, $evaluation){
+
+        $evaluation = Evaluation::findOrFail($evaluation);
+
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'task_id' => 'required|exists:tasks,id',
+            'efficiency' => 'required|in:1,2,3,4,5',
+            'quality' => 'required|in:1,2,3,4,5',
+            'timeliness' => 'required|in:1,2,3,4,5',
+            'accuracy' => 'required|in:1,2,3,4,5',
+            'tardiness' => 'required|in:1,2,3,4,5',
+            'feedback' => 'nullable|string|max:255',
+        ]);
+    
+        $evaluation->user_id = $request->user_id;
+        $evaluation->task_id = $request->task_id;
+        $evaluation->efficiency = $request->efficiency;
+        $evaluation->quality = $request->quality;
+        $evaluation->timeliness = $request->timeliness;
+        $evaluation->accuracy = $request->accuracy;
+        $evaluation->tardiness = $request->tardiness;
+        $evaluation->feedback = $request->feedback;
+    
+        $totalRating = $evaluation->efficiency + $evaluation->quality + $evaluation->timeliness + $evaluation->accuracy + $evaluation->tardiness;
+        $totalPercentage = ($totalRating / 25) * 100;
+    
+        if ($totalPercentage < 0 || $totalPercentage > 100) {
+            throw new \Exception('Invalid total percentage value');
+        }
+    
+        $evaluation->total_average = $totalPercentage;
+        $evaluation->save();
+    
+        return redirect()->route('sadmin_evaluation')->with('success', 'Evaluation updated successfully!');
+
+    }
+
+    
+
+    public function getEvaluationData($id) {
+        $evaluation = Evaluation::with('user', 'task')->findOrFail($id);
+        return response()->json([
+            'staffName' => $evaluation->user->fname . ' ' . $evaluation->user->lname,
+            'staffJobrole' => $evaluation->user->jobrole,
+            'taskTitle' => $evaluation->task->title,
+            'feedback' => $evaluation->feedback,
+            'efficiency' => $evaluation->efficiency,
+            'quality' => $evaluation->quality,
+            'timeliness' => $evaluation->timeliness,
+            'accuracy' => $evaluation->accuracy,
+            'tardiness' => $evaluation->tardiness,
+            'performanceAverage' => $evaluation->total_average,
+            'date' => \Carbon\Carbon::parse($evaluation->created_at)->format('F j, Y')
+        ]);
+    }
+
+
+    public function destroyevaluation($evaluation){
+        $evaluations = Evaluation::findOrFail($evaluation);
+        $evaluations ->delete();
+    
+        return redirect()->route('sadmin_evaluation')->with('delete', 'Attendance Details Deleted');
+    }
+
+
+
+
+
+
 
 
     public function gettask($userId)

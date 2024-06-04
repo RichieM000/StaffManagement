@@ -4,12 +4,12 @@
     
     {{-- Logo/Header --}}
     <div class="p-4">
-        <h1 class="text-2xl bg-white p-4 rounded-md text-button font-bold">{{ __('Staff Management Solutions') }}</h1>
+        <h1 class="text-2xl bg-white p-4 rounded-md text-green-500 font-bold">Staff Management Solutions</h1>
     </div>
     <nav class="flex-1">
         <ul class="space-y-4 text-lg font-ecom">
             <li>
-                <a href="{{ route('dashboard') }}" class="block py-2 px-4 transition duration-300 ease-in-out hover:bg-gray-700 @if(request()->route()->getName() == 'dashboard') bg-gray-700 @endif">
+                <a href="{{ route('userdashboard') }}" class="block py-2 px-4 transition duration-300 ease-in-out hover:bg-gray-700 @if(request()->route()->getName() == 'userdashboard') bg-gray-700 @endif">
                     <i class="ri-dashboard-fill"></i> Dashboard
                 </a>
 
@@ -20,14 +20,14 @@
                 <a href="{{ route('user.task') }}" class="block py-2 px-4 transition duration-300 ease-in-out hover:bg-gray-700 @if(request()->route()->getName() == 'user.task') bg-gray-700 @endif"><i class="ri-task-fill"></i> Task</a>
             </li>
             <li>
-                <a href="{{ route('user.leave') }}" class="block py-2 px-4 transition duration-300 ease-in-out hover:bg-gray-700"><i class="ri-calendar-close-fill"></i> File A Leave</a>
+                <a href="{{ route('user.leave') }}" class="block py-2 px-4 transition duration-300 ease-in-out hover:bg-gray-700 @if(request()->route()->getName() == 'user.leave') bg-gray-700 @endif"><i class="ri-calendar-close-fill"></i> File A Leave</a>
             </li>
             <li>
-                <a href="" class="block py-2 px-4 transition duration-300 ease-in-out hover:bg-gray-700"><i class="ri-feedback-fill"></i> Feedback</a>
+                <a href="{{ route('user.evaluation') }}" class="block py-2 px-4 transition duration-300 ease-in-out hover:bg-gray-700 @if(request()->route()->getName() == 'user.evaluation') bg-gray-700 @endif"><i class="ri-feedback-fill"></i> Evaluation</a>
             </li>
-            <li>
+            {{-- <li>
                 <a href="" class="block py-2 px-4 transition duration-300 ease-in-out hover:bg-gray-700"><i class="ri-team-fill"></i> Departments & Teams</a>
-            </li>
+            </li> --}}
            
             <li>
                 <form id="logoutForm" method="POST" action="{{ route('logout') }}">

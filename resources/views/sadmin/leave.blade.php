@@ -116,10 +116,38 @@
                     <td class="px-4 py-2 whitespace-wrap">{{ $leaveRequest->user->jobrole }}</td>
                     
                     <td class="px-4 py-2 whitespace-wrap">{{ $leaveRequest->reason }}</td>
-                    <td style="text-align: left" class="px-4 py-2 whitespace-wrap">{{ $leaveRequest->start_date }}</td>
-                    <td style="text-align: left" class="px-4 py-2 whitespace-wrap">{{ $leaveRequest->end_date }}</td>
-                    <td class="px-4 py-2 whitespace-wrap capitalize">{{ $leaveRequest->status }}</td>
+                    <?php
+                                           
+    
+                                            // Assuming $attendance->date is already a valid date string or Carbon instance
+                                            $leaveDate = \Carbon\Carbon::parse($leaveRequest->start_date);
+    
+                                            // Format the date as "Month-Day-Year"
+                                            $formattedDate = $leaveDate->format('M d, Y');
+    
+                                            // Now you can use $formattedDate in your view:
+                                            echo '<td class="px-4 py-2 whitespace-nowrap">' . $formattedDate . '</td>';
+                                            ?>
+                    <?php
+                                           
+    
+                    // Assuming $attendance->date is already a valid date string or Carbon instance
+                    $leaveDate = \Carbon\Carbon::parse($leaveRequest->end_date);
 
+                    // Format the date as "Month-Day-Year"
+                    $formattedDate = $leaveDate->format('M d, Y');
+
+                    // Now you can use $formattedDate in your view:
+                    echo '<td class="px-4 py-2 whitespace-nowrap">' . $formattedDate . '</td>';
+                    ?>
+                   @if($leaveRequest->status === 'approved')
+                   <td class="px-4 py-2 whitespace-wrap text-green-500 capitalize">{{ $leaveRequest->status }}</td>
+                   @elseif($leaveRequest->status === 'rejected')
+                   <td class="px-4 py-2 whitespace-wrap text-red-500 capitalize">{{ $leaveRequest->status }}</td>
+                   @else
+                   <td class="px-4 py-2 whitespace-wrap capitalize">{{ $leaveRequest->status }}</td>
+                   @endif
+                    
 
                     <td class="py-3 px-6 text-center whitespace-nowrap flex justify-center gap-2">
 

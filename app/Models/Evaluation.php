@@ -9,7 +9,7 @@ class Evaluation extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'task_id', 'efficiency', 'quality','timeliness', 'accuracy', 'tardiness', 'total_average', 'feedback'];
+    protected $fillable = ['id','user_id', 'task_id', 'efficiency', 'quality','timeliness', 'accuracy', 'tardiness', 'total_average', 'feedback'];
 
 
     public function user()
