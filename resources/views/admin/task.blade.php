@@ -43,22 +43,7 @@
                         }, 3000); // Adjust the timeout value as needed (in milliseconds)
                     </script>
                     @endif
-                    <div class="flex justify-between mt-4">
-                    <form action="{{ route('admin.task') }}" method="GET" class="mb-4">
-                        <input type="text" name="search" placeholder="Search Task..." value="{{ request()->input('search') }}" class="px-3 py-1 border border-gray-300 rounded-md">
-                        <button type="submit" class="bg-blue-500 text-white px-4 ml-2 py-1 rounded-md hover:bg-hover">Search</button>
-                    </form>
-
-                    <form action="{{ route('admin.task') }}" method="GET" class="flex items-center">
-                        <label for="order_by" class="mr-2">Sort by:</label>
-                        <select name="order_by" id="order_by" onchange="this.form.submit()" class="mt-1 p-2 border overflow-y-auto border-gray-300 rounded-md w-16 focus:outline-none focus:ring focus:ring-blue-300">
-                            <option value="default" {{ $orderBy == 'default' ? 'selected' : '' }}>---</option>
-                            <option value="asc" {{ $orderBy == 'asc' ? 'selected' : '' }}>A-Z</option>
-                            <option value="desc" {{ $orderBy == 'desc' ? 'selected' : '' }}>Z-A</option>
-                        </select>
-                    </form>
-                    
-                </div>
+                   
                     
                     {{-- <script>
                         function sortTask() {
@@ -81,10 +66,11 @@
                                         <!-- Existing headers -->
                                         <th class="px-4 py-2 whitespace-nowrap">#</th>
                                         <th class="px-4 py-2 whitespace-nowrap">Name</th>
+                                        <th class="px-4 py-2 whitespace-nowrap">Position</th>
                                         <th class="px-4 py-2 whitespace-nowrap">Task Title</th>
                                         <th class="px-4 py-2 whitespace-nowrap">Description</th>
                                         <th class="px-4 py-2 whitespace-nowrap">Deadline</th>
-                                        <th class="px-4 py-2 whitespace-nowrap">Position</th>
+                                        
                                         <th class="px-4 py-2 whitespace-nowrap">File Uploads</th>
                                         {{-- <th class="px-4 py-2 whitespace-nowrap">Kagawad Committee</th> --}}
                                         <th class="px-4 py-2 whitespace-nowrap">Status</th>
@@ -108,6 +94,16 @@
                                     <tr class="border-b border-gray-200 transition duration-300 ease-in-out text-center hover:bg-gray-100">
                                         <td style="text-align: center" class="px-4 py-2">{{ $counter++ }}.</td>
                                         <td class="px-4 py-2 whitespace-nowrap capitalize">{{ $task->assignedTo->fname }}</td>
+                                        <td class="px-4 py-2 whitespace-wrap max-w-60">
+                                            {{-- <div class="flex flex-nowrap"> --}}
+                                            @foreach($task->jobRoles() as $jobRole)
+                                                {{ $jobRole }}
+                                                @if (!$loop->last) <!-- Add comma if not the last job role -->
+                                                    -
+                                                @endif
+                                            @endforeach
+                                        {{-- </div> --}}
+                                        </td>
                                         <td class="px-4 py-2 whitespace-nowrap capitalize">{{ $task->title }}</td>
                                         <td class="px-4 py-2 whitespace-nowrap">{{ $task->description }}</td>
                                         <?php
@@ -122,20 +118,11 @@
                                         // Now you can use $formattedDate in your view:
                                         echo '<td class="px-4 py-2 whitespace-nowrap">' . $formattedDate . '</td>';
                                         ?>
-                                        <td class="px-4 py-2 whitespace-wrap max-w-60">
-                                            {{-- <div class="flex flex-nowrap"> --}}
-                                            @foreach($task->jobRoles() as $jobRole)
-                                                {{ $jobRole }}
-                                                @if (!$loop->last) <!-- Add comma if not the last job role -->
-                                                    -
-                                                @endif
-                                            @endforeach
-                                        {{-- </div> --}}
-                                        </td>
+                                       
                                         <td>
                                             @if ($task->file_path)
                                             @if (Storage::disk('public')->exists($task->file_path))
-                                                <a href="{{ Storage::url($task->file_path) }}" class="underline text-blue-500" target="_blank">Download File</a>
+                                                <a href="{{ Storage::url($task->file_path) }}" class="underline text-blue-500" target="_blank">Open File</a>
                                             @else
                                                 File not found
                                             @endif
@@ -146,12 +133,13 @@
                                         </td>
                                         {{-- <td class="px-4 py-2 whitespace-nowrap">{{ $task->kagawad_committee_on }}</td> --}}
 
-                                        <td class="px-4 py-2 whitespace-nowrap">
-                                           
-                                            {{ $task->status }}
-                                        
-                                        </td>
-                                        
+                                        @if($task->status === 'exceeded deadline')
+                                            <td class="px-4 text-red-500 py-2 whitespace-nowrap capitalize">{{ $task->status }}</td>
+                                        @elseif($task->status === 'completed')
+                                             <td class="px-4 text-green-500 py-2 whitespace-nowrap capitalize">{{ $task->status }}</td>
+                                        @else
+                                        <td class="px-4 py-2 whitespace-nowrap capitalize">{{ $task->status }}</td>
+                                        @endif
                                         <td class="px-4 py-2 whitespace-nowrap">
                                            
                                             {{ $task->rejected_reason }}

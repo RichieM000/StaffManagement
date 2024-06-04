@@ -38,17 +38,15 @@
 
 
                     
-                <div class="col-span-2 mt-4" >
-                    <x-input-label for="staffs[]"  class="mb-3" :value="__('Assign To:')" />
-                    <div class="grid grid-cols-2">
-                        <!-- Add the hidden class to hide the checkboxes initially -->
+                 <div class="mb-4">
+                    <label for="staffs" class="block text-sm font-medium text-gray-700 mb-3">Assign To:</label>
+                    <select name="staffs[]" id="staffs" class="form-select block w-full mt-1 p-2 border border-gray-300 rounded-md">
+                        <option value="">--Select User--</option>
                         @foreach($staffWithRoles as $user)
-                        <label for="staffs[]" class="mb-3 items-center">
-                            <input type="checkbox" name="staffs[]" value="{{$user->id}}" class="mt-1 p-2 border border-gray-300 rounded-md">
-                            <span class="ml-1">{{$user->fname}}  {{$user->lname}}</span>
-                        </label>
-                       @endforeach
-                    </div>
+                            <option class="capitalize" value="{{ $user->id }}" data-jobrole="{{ $user->jobrole }}">{{ $user->fname }} {{ $user->lname }}</option>
+                            <option value="{{ $user->id }}" {{ old('user_id', $task->assigned_to ?? '') == $user->id ? 'selected' : '' }}>{{ $user->fname }} {{ $user->lname }}</option>
+                        @endforeach
+                    </select>
                     <x-input-error :messages="$errors->get('staffs')" class="mt-2" />
                 </div>
 

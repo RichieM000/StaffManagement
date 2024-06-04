@@ -11,7 +11,7 @@
 
         <div class="container m-auto md:w-3/4 lg:w-5/12 py-6">
             <div class="flex justify-between items-center">
-            <h1 class="text-2xl font-semibold mb-4">Create new user</h1>
+            <h1 class="text-2xl font-semibold mb-4">Add Staff</h1>
             <a href="{{route('sadmin_showusers')}}" class="bg-button px-6 py-1 text-white rounded-md hover:bg-hover">Back</a>
         </div>
             <div class="bg-white shadow-md rounded-lg p-6 mx-auto">
@@ -58,7 +58,8 @@
                         <x-text-input id="password" class="block mt-1 w-full"
                                         type="password"
                                         name="password"
-                                        required autocomplete="new-password" />
+                                        required autocomplete="new-password"
+                                        placeholder="optional.." />
             
                         <x-input-error :messages="$errors->get('password')" class="mt-2" />
                     </div>
@@ -69,7 +70,8 @@
             
                         <x-text-input id="password_confirmation" class="block mt-1 w-full"
                                         type="password"
-                                        name="password_confirmation" required autocomplete="new-password" />
+                                        name="password_confirmation" required autocomplete="new-password"
+                                        placeholder="optional.." />
             
                         <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
                     </div>
@@ -209,7 +211,7 @@
                     </div>
     
                     <div class="col-span-2 m-auto">
-                        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md">Add User</button>
+                        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md">Add Staff</button>
                     </div>
                 </form>
             </div>

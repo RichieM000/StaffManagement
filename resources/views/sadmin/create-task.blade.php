@@ -52,18 +52,21 @@
                 <div class="mb-4">
                     <label for="title" class="block text-sm font-medium text-gray-700">Task Title:</label>
                     <input type="text" name="title" id="title" class="form-input block w-full mt-1 p-2 border border-gray-300 rounded-md" required>
+                    <x-input-error :messages="$errors->get('title')" class="mt-2" />
                 </div>
             
                 <!-- Task Description -->
                 <div class="mb-4">
                     <label for="description" class="block text-sm font-medium text-gray-700">Task Description:</label>
                     <textarea name="description" id="description" rows="3" class="form-textarea block w-full mt-1 p-2 border border-gray-300 rounded-md" required></textarea>
+                    <x-input-error :messages="$errors->get('description')" class="mt-2" />
                 </div>
             
                 <!-- Task Deadline -->
                 <div class="mb-6">
                     <label for="deadline" class="block text-sm font-medium text-gray-700">Task Deadline:</label>
                     <input type="date" name="deadline" id="deadline" class="form-input block w-full mt-1 p-2 border border-gray-300 rounded-md" required>
+                    <x-input-error :messages="$errors->get('deadlline')" class="mt-2" />
                 </div>
             
                 <!-- Task Submission Button -->

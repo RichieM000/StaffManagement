@@ -18,7 +18,7 @@ Route::get('/', function () {
     return view('auth.login');
 });
 
-Route::get('/dashboard', [UserController::class, 'index'])->middleware(['auth', 'verified', 'user'])->name('dashboard');
+Route::get('/dashboard', [UserController::class, 'index'])->middleware(['auth', 'verified', 'user'])->name('userdashboard');
 
 Route::middleware('auth', 'verified', 'user')->group(function () {
 
@@ -37,6 +37,13 @@ Route::middleware('auth', 'verified', 'user')->group(function () {
     Route::get('/timesheet', [AttendanceController::class, 'clockrecord'])->name('index.clock');
     Route::post('/clock-in', [AttendanceController::class, 'clockIn'])->name('clock.in');
     Route::post('/clock-out', [AttendanceController::class, 'clockOut'])->name('clock.out');
+    Route::delete('/timesheet/delete{id}', [AttendanceController::class, 'destroyrecord'])->name('delete.timesheet');
+
+    // evaluation
+    Route::get('/view/evaluation/{id}', [EvaluationController::class, 'viewEvaluationData'])->name('view-evaluation-data');
+
+    Route::get('/evaluation', [EvaluationController::class, 'userevaluation'])->name('user.evaluation');
+    
 
 
     });
@@ -55,16 +62,22 @@ Route::middleware('auth')->group(function () {
 
 require __DIR__.'/auth.php';
 
-Route::middleware('auth','admin')->group(function (){
+Route::middleware('auth:admin', 'admin')->group(function (){
+
+
 
 
     Route::get('admin/registerstaff', [RegisteredUserController::class, 'create'])
                 ->name('admin.register');
 
-    Route::post('register', [RegisteredUserController::class, 'store'])->name('register.store');
+    Route::post('admin/register/store', [RegisteredUserController::class, 'store'])->name('adminregister');
+
+    Route::get('admin/loghistory', [AdminController::class, 'showlogs'])->name('admin.logs');
+
+    Route::post('/logs/clear', [AdminController::class, 'clear'])->name('logs.clear');
 
 
-    Route::get('/export-excel', [ExportController::class, 'exportExcel'])->name('export.excel');
+    // Route::get('/export-excel', [ExportController::class, 'exportExcel'])->name('export.excel');
 
 
 
@@ -102,10 +115,15 @@ Route::get('admin/attendance', [AttendanceController::class, 'index'])->name('ad
 Route::get('admin/attendance2', [AttendanceController::class, 'index2'])->name('admin-attendance2');
 
 // performance evaluation
+Route::get('/admin/evaluation/{id}', [EvaluationController::class, 'getEvaluationData'])->name('get-evaluation');
+
 Route::get('/get-tasks/{userId}', [EvaluationController::class, 'fetchTasks'])->name('get-tasks');
 Route::get('admin/evaluation', [EvaluationController::class, 'index'])->name('admin-evaluation');
-Route::get('admin/evaluation/add', [EvaluationController::class, 'addevaluation'])->name('admin-addevaluation');
+Route::get('/evaluation/admin/add', [EvaluationController::class, 'addevaluation'])->name('admin-addevaluation');
 Route::post('/evaluation/store', [EvaluationController::class, 'store'])->name('admin-storeevaluation');
+Route::get('/admin/edit/{evaluation}', [EvaluationController::class, 'editevaluation'])->name('admin-editevaluation');
+Route::put('/admin/update{evaluation}', [EvaluationController::class, 'updateevaluation'])->name('admin-updateevaluation');
+Route::delete('/admin/destroy{evaluation}', [EvaluationController::class, 'destroyevaluation'])->name('admin-deleteevaluation');
 
 
 });
@@ -122,13 +140,20 @@ Route::middleware('auth','systemadmin')->group(function () {
 
     Route::post('register', [SadminController::class, 'store'])->name('sadminregister');
 
+    Route::get('systemadmin/loghistory', [SadminController::class, 'showlogs'])->name('sadmin.logs');
+    Route::post('systemadmin/logs/clear', [SadminController::class, 'clear'])->name('logs.clear');
+
 
     Route::get('systemadmin/dashboard', [SadminController::class, 'mainindex'])->name('sadmin_dashboard');
     Route::get('systemadmin/users', [SadminController::class, 'showusers'])->name('sadmin_showusers');
     Route::get('systemadmin/create-users', [SadminController::class, 'createusers'])->name('sadmin_createusers');
     Route::post('systemadmin/store-users', [SadminController::class, 'storeusers'])->name('sadmin_storeusers');
+
     Route::get('systemadmin/create-admin', [SadminController::class, 'createadmin'])->name('sadmin_createadmin');
     Route::post('systemadmin/store-admin', [SadminController::class, 'storeadmin'])->name('sadmin_storeadmin');
+    Route::put('systemadmin/update-admin/{id}', [SadminController::class, 'updateadmin'])->name('sadmin_updateadmin');
+
+
     Route::get('/edit-users/{user}', [SadminController::class, 'edituser'])->name('sadmin_editusers');
     Route::put('/update-users/{user}', [SadminController::class, 'updateuser'])->name('sadmin_updateusers');
     Route::delete('/delete-users/{user}', [SadminController::class, 'destroyuser'])->name('sadmin_deleteusers');
@@ -144,19 +169,27 @@ Route::middleware('auth','systemadmin')->group(function () {
     Route::delete('/delete-tasks/{task}', [SadminController::class, 'destroytasks'])->name('sadmin_deletetasks');
 
     Route::get('systemadmin/attendance-time', [SadminController::class, 'showattendance'])->name('sadmin_showattendance');
+    Route::delete('/systemadmin/attendancedelete/{id}', [SadminController::class, 'destroyattendance'])->name('sadmin_deleteattendance');
 
     Route::get('systemadmin/attendance-sheet', [SadminController::class, 'showattendancesheet'])->name('sadmin_showattendancesheet');
 
     Route::get('systemadmin/leave', [SadminController::class, 'showleave'])->name('sadmin_showleave');
     Route::put('systemadmin/leave/approve/{id}', [SadminController::class, 'approveleave'])->name('sadmin_approveleave');
     Route::put('systemadmin/leave/reject/{id}', [SadminController::class, 'rejectleave'])->name('sadmin_rejectleave');
-    Route::delete('systemadmin/leave/delete/{id}', [SadminController::class, 'destroyleave'])->name('sadmin_deleteleave');
+    Route::delete('/systemadmin/leave/delete/{id}', [SadminController::class, 'destroyleave'])->name('sadmin_deleteleave');
 
     // // evaluation
+    Route::get('/systemadmin/evaluation/{id}', [SadminController::class, 'getEvaluationData'])->name('get-evaluation-data');
+
+
     Route::get('/systemadmin/get-tasks/{userId}', [SadminController::class, 'gettask'])->name('get-tasks');
     Route::get('systemadmin/evaluation', [SadminController::class, 'index'])->name('sadmin_evaluation');
-    Route::get('systemadmin/evaluation/add', [SadminController::class, 'addevaluation'])->name('sadmin_addevaluation');
+    Route::get('/evaluation/systemadmin/add', [SadminController::class, 'addevaluation'])->name('sadmin_addevaluation');
     Route::post('/sysevaluation/store', [SadminController::class, 'storeevaluation'])->name('sadmin_storeevaluation');
+    Route::get('/edit/{evaluation}', [SadminController::class, 'editevaluation'])->name('sadmin_editevaluation');
+    Route::put('/update{evaluation}', [SadminController::class, 'updateevaluation'])->name('sadmin_updateevaluation');
+    Route::delete('/destroy{evaluation}', [SadminController::class, 'destroyevaluation'])->name('sadmin_deleteevaluation');
+    
    
 
 });

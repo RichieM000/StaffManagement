@@ -17,11 +17,14 @@ class Admin
     public function handle(Request $request, Closure $next): Response
     {
 
-        if(Auth::user()->usertype != 'admin'){
-            return redirect('dashboard');
-            return redirect('systemadmin/dashboard');
-        }
+      
         
+        if(!Auth::guard('admin')->check()){
+            if(!Auth::guard('admin')->user()){
+                return redirect('dashboard');
+                return redirect('systemadmin/dashboard');
+            }
+        }
         return $next($request);
     }
 }

@@ -15,7 +15,7 @@
         </div>
 
         <div class="container mx-auto mt-8">
-            <form action="/tasks/{{$task->id}}" method="POST" class="max-w-md mx-auto">
+            <form action="/update-tasks/{{$task->id}}" method="POST" class="max-w-md mx-auto">
                 @csrf
                 @method('PUT')
                 <!-- Task Title -->
@@ -23,33 +23,30 @@
                     <x-input-label for="jobrole" :value="__('Job Position')" />
                     <select name="jobrole" id="jobrole" value="{{ old('jobrole', $task->jobrole) }}" class="mt-1 p-2 borderoverflow-y-auto border-gray-300 rounded-md w-full">
                         <option>--Select Position--</option>
-                        <option value="Chairman">Chairman</option>
-                        <option value="Secretary">Secretary</option>
-                        <option value="Treasurer">Treasurer</option>
-                        <option value="Kagawad">Kagawad</option>
-                        <option value="Tanod">Tanod</option>
-                        <option value="SKchairman">SK Chairman</option>
-                        <option value="SK">SK</option>
-                        <option value="Clerk">Clerk</option>
-                        <option value="BHW">Barangay Health Workers</option>
-                        
+                        <option value="Chairman" {{$task->jobrole == 'Chairman' ? 'selected' : ''}}>Chairman</option>
+                            <option value="Secretary" {{$task->jobrole == 'Secretary' ? 'selected' : ''}}>Secretary</option>
+                            <option value="Treasurer" {{$task->jobrole == 'Treasurer' ? 'selected' : ''}}>Treasurer</option>
+                            <option value="Kagawad" {{$task->jobrole == 'Kagawad' ? 'selected' : ''}}>Kagawad</option>
+                            <option value="Tanod" {{$task->jobrole == 'Tanod' ? 'selected' : ''}}>Tanod</option>
+                            <option value="SKchairman" {{$task->jobrole == 'SKchairman' ? 'selected' : ''}}>SK Chairman</option>
+                            <option value="SK" {{$task->jobrole == 'SK' ? 'selected' : ''}}>SK</option>
+                            <option value="Clerk" {{$task->jobrole == 'Clerk' ? 'selected' : ''}}>Clerk</option>
+                            <option value="BHW" {{$task->jobrole == 'BHW' ? 'selected' : ''}}>Barangay Health Workers</option>
                     </select>
                     <x-input-error :messages="$errors->get('jobrole')" class="mt-2" />
                 </div>
 
 
                     
-                <div class="col-span-2 mt-4" >
-                    <x-input-label for="staffs[]"  class="mb-3" :value="__('Assign To:')" />
-                    <div class="grid grid-cols-2">
-                        <!-- Add the hidden class to hide the checkboxes initially -->
+                 <div class="mb-4">
+                    <label for="staffs" class="block text-sm font-medium text-gray-700 mb-3">Assign To:</label>
+                    <select name="staffs[]" id="staffs" class="form-select block w-full mt-1 p-2 border border-gray-300 rounded-md">
+                        <option value="">--Select User--</option>
                         @foreach($staffWithRoles as $user)
-                        <label for="staffs[]" class="mb-3 items-center">
-                            <input type="checkbox" name="staffs[]" value="{{$user->id}}" class="mt-1 p-2 border border-gray-300 rounded-md">
-                            <span class="ml-1">{{$user->fname}}  {{$user->lname}}</span>
-                        </label>
-                       @endforeach
-                    </div>
+                            <option class="capitalize" value="{{ $user->id }}" data-jobrole="{{ $user->jobrole }}">{{ $user->fname }} {{ $user->lname }}</option>
+                            <option value="{{ $user->id }}" {{ old('user_id', $task->assigned_to ?? '') == $user->id ? 'selected' : '' }}>{{ $user->fname }} {{ $user->lname }}</option>
+                        @endforeach
+                    </select>
                     <x-input-error :messages="$errors->get('staffs')" class="mt-2" />
                 </div>
 

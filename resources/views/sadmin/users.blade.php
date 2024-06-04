@@ -22,7 +22,7 @@
                     </h2>
                     <div class="flex justify-between items-center">
                         <h1 class="text-2xl font-semibold mb-4">Staff Information</h1>
-                        <a href="{{ route('sadmin_createusers') }}" class="rounded bg-green-500 p-1.5 text-white hover:bg-green-700"><i class="ri-add-large-fill"></i> Create New User</a>
+                        <a href="{{ route('sadmin_createusers') }}" class="rounded bg-green-500 p-1.5 text-white hover:bg-green-700"><i class="ri-add-large-fill"></i> Add Staff</a>
                         {{-- <a href="{{ route('sadmin_createadmin') }}" class="rounded bg-blue-500 p-1.5 text-white hover:bg-green-700"><i class="ri-add-large-fill"></i> Create New Admin</a> --}}
                     </div>
                     @if(session('success'))
@@ -98,7 +98,7 @@
                                         <th class="px-4 py-2 whitespace-nowrap">Position</th>
                                         <th class="px-4 py-2 whitespace-nowrap">Kagawad Committee</th>
                                         <th class="px-4 py-2 whitespace-nowrap">Work Schedule</th>
-                                        <th class="px-4 py-2 whitespace-nowrap">User Type</th>
+                                       
                                         
                                         <th class="py-3 px-6 text-center whitespace-nowrap">Edit</th>
                                         <!-- New header for Assign Task button -->
@@ -130,7 +130,7 @@
                                                         {{ $workSchedule->day_of_week }}: {{ \Carbon\Carbon::parse($workSchedule->start_time)->format('h:i A') }} to {{ \Carbon\Carbon::parse($workSchedule->end_time)->format('h:i A') }}<br>
                                                     @endforeach
                                                 </td>
-                                                <td class="px-4 py-2 whitespace-wrap capitalize">{{$staffMember->usertype}}</td>
+                                                
                                                 <td style="display:flex;align-items: center;border-bottom:0;" class="py-3 px-6 text-center whitespace-nowrap flex justify-center gap-2">
                                                     <div>
                                                         <a class="text-xl text-button hover:text-hover" href="/edit-users/{{ $staffMember->id }}"><i class="ri-edit-fill"></i></a>

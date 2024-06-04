@@ -81,6 +81,7 @@ return [
             'driver' => 'eloquent',
             'model' => env('AUTH_MODEL', App\Models\Admin::class),
         ],
+        Anhskohbo\NoCaptcha\NoCaptchaServiceProvider::class,
 
         // 'users' => [
         //     'driver' => 'database',
@@ -88,6 +89,11 @@ return [
         // ],
     ],
 
+
+    'aliases' => [
+        // Other aliases...
+        'NoCaptcha' => Anhskohbo\NoCaptcha\Facades\NoCaptcha::class,
+    ],
     /*
     |--------------------------------------------------------------------------
     | Resetting Passwords

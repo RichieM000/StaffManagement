@@ -87,12 +87,15 @@
                                             <th class="px-4 py-2 whitespace-nowrap">Date</th>
                                             <th class="px-4 py-2 whitespace-nowrap">Firstname</th>
                                             <th class="px-4 py-2 whitespace-nowrap">Lastname</th>
+                                            <th class="px-4 py-2 whitespace-nowrap">Position</th>
                                             <th class="px-4 py-2 whitespace-nowrap">Time In</th>
                                             <th class="px-4 py-2 whitespace-nowrap">Time Out</th>
+                                            <th class="px-4 py-2 whitespace-nowrap">Status</th>
+                                            <th style="text-align: center" class="px-4 py-2 whitespace-nowrap">Action</th>
                                             
                                             {{-- <th class="px-4 py-2 whitespace-nowrap">Duration</th> --}}
     
-                                            {{-- <th class="py-3 px-6 text-center whitespace-nowrap">Edit</th> --}}
+                                            
                                             <!-- New header for Assign Task button -->
                                            
                                         </tr>
@@ -121,11 +124,22 @@
                                             ?>
                                             <td class="px-4 py-2 whitespace-nowrap capitalize">{{ $attendance->user->fname }}</td>
                                             <td class="px-4 py-2 whitespace-nowrap capitalize">{{ $attendance->user->lname }}</td>
+                                            <td class="px-4 py-2 whitespace-nowrap capitalize">{{ $attendance->user->jobrole }}</td>
                                             <td class="px-4 py-2 whitespace-nowrap">{{ \Carbon\Carbon::parse($attendance->clock_in)->format('h:i A') }}</td>
                                             <td class="px-4 py-2 whitespace-nowrap"> @if($attendance->clock_out)
                                                 {{ \Carbon\Carbon::parse($attendance->clock_out)->format('h:i A') }}
                                             @endif</td>
-                                            
+                                            @if($attendance->status === 'late')
+                                            <td class="px-4 py-2 whitespace-nowrap text-red-500 capitalize">{{ $attendance->status }}</td>
+                                            @else
+                                            <td class="px-4 py-2 whitespace-nowrap text-green-500 capitalize">{{ $attendance->status }}</td>
+                                            @endif
+                                            <td style="text-align: center" class="px-4 py-2 whitespace-nowrap capitalize">   
+                                                <form action="/systemadmin/attendancedelete/{{$attendance->id}}" method="POST">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" onclick="return confirm('Are you sure you want to delete this task assignment?')" class="text-red-500 text-xl hover:text-red-700"><i class="ri-delete-bin-fill"></i></button>
+                                            </form></td>
                                             {{-- <td class="px-4 py-2 whitespace-nowrap">{{ $formattedDuration }}</td> --}}
                                            
                                         </tr>

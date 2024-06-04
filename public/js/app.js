@@ -34,6 +34,11 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
+  
+
+
+
+
 
 function updateTime() {
     const currentTimeElement = document.getElementById('currentTime');

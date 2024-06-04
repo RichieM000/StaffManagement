@@ -25,6 +25,8 @@ class User extends Authenticatable
         'password',
     ];
 
+   
+
     public function workSchedules()
     {
         return $this->hasMany(WorkSchedule::class);

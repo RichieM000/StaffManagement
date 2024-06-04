@@ -31,10 +31,10 @@
             events: [
             @foreach($userTasks as $task)
             {
-                title: '{{ $task->title }}',
+                title: '{{ $task->status === "exceeded deadline" ? "task exceeded" : $task->title }}',
                 start: '{{ $task->deadline }}', // Assuming deadline is a valid date format
-                color: '#3788d8', // Set a color for the task deadline
-                url: '{{ route('user.task', $task->id) }}' // Optional: link to task detail
+                color: '{{ $task->status === "exceeded deadline" ? "red" : "#3788d8" }}', // Set color based on task status
+                url: '{{ route('user.task', $task->id) }}' // Optional: link to task detail // Optional: link to task detail
             },
             @endforeach
         ]
@@ -49,6 +49,7 @@
                 <h1>Task Deadline</h1>
                     <div class="" id='calendar'></div>
                 </div>
+                
             <h1 class="text-2xl font-bold mb-4">My Tasks</h1>
             
             <div class="bg-white shadow-sm sm:rounded-lg mb-4 p-4">
@@ -92,6 +93,12 @@
                             </div>
                                 @elseif ($task->status === 'rejected')
                                     <span class="text-red-500 mr-3">Task Rejected</span>
+
+                                @elseif($task->status === 'exceeded deadline')
+                                <div class="text-sm text-red-500">
+                                    <p>Status: Exceeded Deadline</p>
+                                    <button disabled>Task is no longer available</button>
+                                </div>    
                             @else
                                 <span class="text-green-500">Task Completed</span>
                                
@@ -107,7 +114,7 @@
    
       <!-- Reject Modal -->
       @foreach($tasks as $task)
-      <div id="rejectModal" class="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75 hidden">
+      <div id="rejectModal" class="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75 z-10 hidden">
         <div class="bg-white p-6 rounded-lg shadow-lg">
             <h2 class="text-lg font-semibold mb-4">Reject Task</h2>
             <form action="/task/reject/{{$task->id}}" method="POST">

@@ -44,22 +44,7 @@
                         }, 3000); // Adjust the timeout value as needed (in milliseconds)
                     </script>
                     @endif
-                    <div class="flex justify-between mt-4">
-                    <form action="{{ route('admin-leave') }}" method="GET" class="mb-4">
-                        <input type="text" name="search" placeholder="Search Leave..." value="{{ request()->input('search') }}" class="px-3 py-1 border border-gray-300 rounded-md">
-                        <button type="submit" class="bg-blue-500 text-white px-4 ml-2 py-1 rounded-md hover:bg-hover">Search</button>
-                    </form>
-
-                    {{-- <form action="{{ route('admin-leave') }}" method="GET" class="flex items-center">
-                        <label for="order_by" class="mr-2">Sort by:</label>
-                        <select name="order_by" id="order_by" onchange="this.form.submit()" class="mt-1 p-2 border overflow-y-auto border-gray-300 rounded-md w-16 focus:outline-none focus:ring focus:ring-blue-300">
-                            <option value="default" {{ $orderBy == 'default' ? 'selected' : '' }}>---</option>
-                            <option value="asc" {{ $orderBy == 'asc' ? 'selected' : '' }}>A-Z</option>
-                            <option value="desc" {{ $orderBy == 'desc' ? 'selected' : '' }}>Z-A</option>
-                        </select>
-                    </form> --}}
-                    
-                </div>
+                   
                     
                     {{-- <script>
                         function sortTask() {
@@ -119,8 +104,14 @@
                                         <td class="px-4 py-2 whitespace-wrap">{{ $leaveRequest->reason }}</td>
                                         <td style="text-align: left" class="px-4 py-2 whitespace-wrap">{{ $leaveRequest->start_date }}</td>
                                         <td style="text-align: left" class="px-4 py-2 whitespace-wrap">{{ $leaveRequest->end_date }}</td>
+                                        
+                                        @if($leaveRequest->status === 'approved')
+                                        <td class="px-4 py-2 whitespace-wrap text-green-500 capitalize">{{ $leaveRequest->status }}</td>
+                                        @elseif($leaveRequest->status === 'rejected')
+                                        <td class="px-4 py-2 whitespace-wrap text-red-500 capitalize">{{ $leaveRequest->status }}</td>
+                                        @else
                                         <td class="px-4 py-2 whitespace-wrap capitalize">{{ $leaveRequest->status }}</td>
-
+                                        @endif
 
                                         <td class="py-3 px-6 text-center whitespace-nowrap flex justify-center gap-2">
 

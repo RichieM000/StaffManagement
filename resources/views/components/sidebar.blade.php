@@ -20,7 +20,7 @@
     
     {{-- Logo/Header --}}
     <div class="p-4">
-        <h1 class="text-2xl bg-white p-4 rounded-md text-button font-bold">Staff Management Solutions</h1>
+        <h1 class="text-2xl bg-white p-4 rounded-md text-green-500 font-bold">Staff Management Solutions</h1>
     </div>
     <nav class="flex-1">
         <ul class="space-y-4 text-lg font-ecom">
@@ -73,13 +73,16 @@
                 <a href="{{ route('admin.teams') }}" class="block py-2 px-4 transition duration-300 ease-in-out hover:bg-gray-700 @if(request()->route()->getName() == 'admin.teams') bg-gray-700 @endif"><i class="ri-team-fill"></i> Departments & Teams</a>
             </li> --}}
             <li>
+                <a href="{{route('admin.logs')}}" class="block py-2 px-4 transition duration-300 ease-in-out hover:bg-gray-700 @if(request()->route()->getName() == 'admin.logs') bg-gray-700 @endif "><i class="ri-history-fill"></i> User's Log</a>
+            </li>
+            <li>
                 <a href="{{ route('admin.task') }}" class="block py-2 px-4 transition duration-300 ease-in-out hover:bg-gray-700 @if(request()->route()->getName() == 'admin.task') bg-gray-700 @endif"><i class="ri-task-fill "></i> Task Management</a>
             </li>
             <li>
                 <a href="{{ route('admin-attendance') }}" class="block py-2 px-4 transition duration-300 ease-in-out hover:bg-gray-700 @if(request()->route()->getName() == 'admin-attendance') bg-gray-700 @endif "><i class="ri-calendar-schedule-fill"></i> Attendance & Time Tracking</a>
             </li>
             <li>
-                <a href="{{ route('admin-attendance2') }}" class="block py-2 px-4 transition duration-300 ease-in-out hover:bg-gray-700 @if(request()->route()->getName() == 'admin-attendance2') bg-gray-700 @endif "><i class="ri-time-fill"></i> Time In/Time Out Monitoring</a>
+                <a href="{{ route('admin-attendance2') }}" class="block py-2 px-4 transition duration-300 ease-in-out hover:bg-gray-700 @if(request()->route()->getName() == 'admin-attendance2') bg-gray-700 @endif "><i class="ri-time-fill"></i> AM/PM Time In Monitoring</a>
             </li>
 
 
