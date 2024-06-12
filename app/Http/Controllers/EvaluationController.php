@@ -12,7 +12,7 @@ class EvaluationController extends Controller
 {
     public function index(){
 
-        $evaluations = Evaluation::with(['user', 'task'])->get();
+        $evaluations = Evaluation::with(['user', 'task'])->latest()->get();
         return view('admin/evaluation', compact('evaluations'));
     }
 
@@ -147,6 +147,13 @@ public function updateevaluation(Request $request, $evaluation){
 
 }
 
+public function deleteMultipleRowseval(Request $request)
+    {
+        $ids = $request->input('ids');
+        Evaluation::whereIn('id', explode(",",$ids))->delete();
+        return response()->json(['status' => true, 'delete' => 'Selected Item Deleted']);
+    }
+
 public function destroyevaluation($evaluation){
     $evaluations = Evaluation::findOrFail($evaluation);
     $evaluations ->delete();
@@ -167,24 +174,24 @@ public function userevaluation(){
     return view('evaluation', compact('evaluations'));
 }
 
-// public function viewEvaluationData($id){
+public function viewEvaluationData($id){
 
-//     $evaluation = Evaluation::with('user', 'task')->findOrFail($id);
-//     return response()->json([
-//         'staffName' => $evaluation->user->fname . ' ' . $evaluation->user->lname,
-//         'staffJobrole' => $evaluation->user->jobrole,
-//         'taskTitle' => $evaluation->task->title,
-//         'feedback' => $evaluation->feedback,
-//         'efficiency' => $evaluation->efficiency,
-//         'quality' => $evaluation->quality,
-//         'timeliness' => $evaluation->timeliness,
-//         'accuracy' => $evaluation->accuracy,
-//         'tardiness' => $evaluation->tardiness,
-//         'performanceAverage' => $evaluation->total_average,
-//         'date' => \Carbon\Carbon::parse($evaluation->created_at)->format('F j, Y')
-//     ]);
+    $evaluation = Evaluation::with('user', 'task')->findOrFail($id);
+    return response()->json([
+        'staffName' => $evaluation->user->fname . ' ' . $evaluation->user->lname,
+        'staffJobrole' => $evaluation->user->jobrole,
+        'taskTitle' => $evaluation->task->title,
+        'feedback' => $evaluation->feedback,
+        'efficiency' => $evaluation->efficiency,
+        'quality' => $evaluation->quality,
+        'timeliness' => $evaluation->timeliness,
+        'accuracy' => $evaluation->accuracy,
+        'tardiness' => $evaluation->tardiness,
+        'performanceAverage' => $evaluation->total_average,
+        'date' => \Carbon\Carbon::parse($evaluation->created_at)->format('F j, Y')
+    ]);
 
-// }
+}
 
 
 }

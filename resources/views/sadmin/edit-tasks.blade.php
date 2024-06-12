@@ -11,7 +11,7 @@
         <div class="container md:w-3/4 lg:w-9/12 mx-12 py-6">
             <div class="flex justify-between items-center">
             <h1 class="text-2xl font-semibold mb-4">Edit Task</h1>
-            <a href="{{route('sadmin_showtasks')}}" class="bg-button px-6 py-1 text-white rounded-md hover:bg-hover">Back</a>
+            <a href="{{route('sadmin_showtasks')}}" class="bg-green-500 px-6 py-1 text-white rounded-md hover:bg-green-700">Back</a>
         </div>
 
         <div class="container mx-auto mt-8">
@@ -75,7 +75,7 @@
 
                 <!-- Task Submission Button -->
                 <div class="flex justify-end">
-                    <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Update Task</button>
+                    <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Update Task</button>
                 </div>
                 
             </form>

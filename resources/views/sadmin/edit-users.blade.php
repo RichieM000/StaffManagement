@@ -12,7 +12,7 @@
         <div class="container m-auto md:w-3/4 lg:w-5/12 py-6">
             <div class="flex justify-between items-center">
             <h1 class="text-2xl font-semibold mb-4">Update User</h1>
-            <a href="{{route('sadmin_showusers')}}" class="bg-button px-6 py-1 text-white rounded-md hover:bg-hover">Back</a>
+            <a href="{{route('sadmin_showusers')}}" class="bg-green-500 px-6 py-1 text-white rounded-md hover:bg-green-700">Back</a>
         </div>
             <div class="bg-white shadow-md rounded-lg p-6 mx-auto">
                 <form action="/update-users/{{$user->id}}" method="POST" class="grid grid-cols-2 gap-3">
@@ -60,8 +60,8 @@
                                         type="password"
                                         name="password"
                                          autocomplete="new-password"
-                                        placeholder="update password if needed" />
-            
+                                        placeholder="update password if needed..." />
+                                        <span class="font-light text-xs mt-2 text-green-500">Password must contain 6 or more character</span>
                         <x-input-error :messages="$errors->get('password')" class="mt-2" />
                     </div>
             
@@ -72,7 +72,7 @@
                         <input id="password_confirmation" class="mt-1 p-2 border border-gray-300 rounded-md w-full"
                                         type="password"
                                         name="password_confirmation"  autocomplete="new-password"
-                                        placeholder="update password if needed" />
+                                        placeholder="update password if needed..." />
             
                         <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
                     </div>
@@ -202,7 +202,7 @@
                             </div>
                             <div>
                                 <label for="start_time" class="block text-sm font-medium text-gray-700">Start Time</label>
-                                <input type="time" name="start_time" id="start_time" class="mt-1 p-2 border border-gray-300 rounded-md w-full">
+                                <input type="time" value="{{$user->start_time}}" name="start_time" id="start_time" class="mt-1 p-2 border border-gray-300 rounded-md w-full">
                             </div>
                             <div>
                                 <label for="end_time" class="block text-sm font-medium text-gray-700">End Time</label>
@@ -212,7 +212,7 @@
                     </div>
     
                     <div class="col-span-2 m-auto">
-                        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md">Update User</button>
+                        <button type="submit" class="bg-green-500 hover:bg-green-700 text-white px-4 py-2 rounded-md">Update User</button>
                     </div>
                 </form>
             </div>

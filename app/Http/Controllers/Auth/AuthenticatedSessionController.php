@@ -38,44 +38,61 @@ class AuthenticatedSessionController extends Controller
 $now = Carbon::now('Asia/Manila');
 
 // Check if there is an existing login history record for today
-// if (auth()->check()) {
-//     $user = auth()->user();
-//     $now = now();
-//     $loginHistory = $user->loginHistories()->where('date', $now->toDateString())->first();
+if (auth()->check()) {
+    $user = auth()->user();
+    $now = now();
+    $loginHistory = $user->loginHistories()->where('date', $now->toDateString())->first();
 
 
-// if ($loginHistory) {
-//     // If an existing record is found and it's for the current date, update its logout time
-//     $loginHistory->update([
-//         'logout_time' => $now->toTimeString(),
-//     ]);
-// } else if($loginHistory) {
+if ($loginHistory) {
+    // If an existing record is found and it's for the current date, update its logout time
+    $loginHistory->update([
+        'logout_time' => $now->toTimeString(),
+    ]);
+} else if($loginHistory) {
     
-//     $loginHistory->update([
-//         'login_time' => $now->toTimeString(),
-//     ]);
-// }else{
-//     // If no existing record is found, create a new one
-//     LoginHistory::create([
-//         'user_id' => $user->id,
-//         'date' => $now->toDateString(),
-//         'login_time' => $now->toTimeString(),
-//     ]);
-// }
-// }
+    $loginHistory->update([
+        'login_time' => $now->toTimeString(),
+    ]);
+}else{
+    // If no existing record is found, create a new one
+    LoginHistory::create([
+        'user_id' => $user->id,
+        'date' => $now->toDateString(),
+        'login_time' => $now->toTimeString(),
+    ]);
+}
+}
 
-if (Auth::guard('admin')->check()) {
-    Auth::guard('admin')->user();
 
-    // Redirect based on the admin usertype
-    
-        return redirect('admin/dashboard');
-    
+if (Auth::guard('admin')->check()){
+    $admin = Auth::guard('admin')->user();
+    $now = Carbon::now('Asia/Manila');
+    $loginHistory = $admin->loginHistories()->where('date', $now->toDateString())->first();
+
+    if (!$loginHistory) {
+        // If no existing record is found, create a new one
+        LoginHistory::create([
+            'admin_id' => $admin->id,
+            'date' => $now->toDateString(),
+            'login_time' => $now->toTimeString(),
+        ]);
+    }
+}
+
+
+
+
+
+
+
+
+
+if (Auth::guard('admin')->attempt(['email' => $request->input('email'), 'password' => $request->input('password')])) {
+    // Admin login successful, redirect to admin dashboard
+    return redirect('admin/dashboard');
 } else {
-    // Check if the web guard is authenticated
-    $user = Auth::user();
-
-    // // Redirect based on the user usertype
+    // Web guard login successful, redirect based on user type
     if ($user->usertype === 'user') {
         return redirect('dashboard');
     }
@@ -85,15 +102,13 @@ if (Auth::guard('admin')->check()) {
     }
 
     // Default user redirection
-    
+    return redirect()->intended(route('dashboard'));
+}
 }
 
-       
 
-     
-
-        return redirect()->intended(route('dashboard'));
-    }
+        
+    
 
     /**
      * Destroy an authenticated session.
@@ -126,11 +141,11 @@ if (Auth::guard('admin')->check()) {
         
             
     
-        Auth::guard('web')->logout();
-
-        $request->session()->invalidate();
-
-        $request->session()->regenerateToken();
+            Auth::logout();
+            Auth::guard('admin')->logout();
+        
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
        
 
         return redirect('/');

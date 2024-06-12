@@ -34,14 +34,14 @@
 
             
             
-                <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                {{-- <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div id="successMessage" class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                         
                         <div class="p-6 text-gray-900 font-bold text-xl dark:text-gray-100">
                             Welcome <span class="text-button capitalize">{{ Auth::user()->name }}</span> 
                         </div>
                     </div>
-                </div>
+                </div> --}}
 
 
 
@@ -56,7 +56,7 @@
      <div class="max-w-7xl bg-white mx-auto sm:px-6 lg:px-8 grid grid-cols-2 gap-2 rounded-lg mt-12">
 
         <!-- Users By Jobrole -->
- <div class=" overflow-hidden sm:rounded-lg mb-4 p-4">
+ <div class=" sm:rounded-lg mb-4 p-4">
     <a href="{{route('admin.staff')}}">
         <div class="transition duration-300 ease-in-out hover:bg-gray-200 p-2.5 rounded-lg">
     <div class="flex justify-between">
@@ -162,7 +162,7 @@
                 <div class="text-xl font-semibold text-red-500">Exceeded Deadline</div>
                 <div class="text-3xl font-semibold text-red-400">{{ $deadline }}</div>
             </div>
-            <div class="bg-green-50 col-span-2 p-4 rounded-lg shadow-md">
+            <div class="bg-green-50 col-span-2 p-4 rounded-lg shadow-md {{ $completedTasksCount > 0? 'animate-pulse hover:scale-110' : '' }}">
                 <div class="text-xl font-semibold text-green-500">Completed Tasks</div>
                 <div class="text-3xl font-semibold text-green-400">{{ $completedTasksCount }}</div>
             </div>
@@ -174,7 +174,7 @@
         <div class="transition duration-300 ease-in-out hover:bg-gray-200 p-2.5 rounded-lg">
         <div class="text-lg font-medium text-gray-900 mb-2 mt-2">Leave Statistics</div>
         <div class="grid grid-cols-2 gap-4">
-            <div class="bg-blue-50 p-4 rounded-lg shadow-md">
+            <div class="bg-blue-50 p-4 rounded-lg shadow-md {{ $overallLeaveCount > 0? 'animate-pulse hover:scale-110' : '' }}">
                 <div class="text-xl font-semibold text-blue-900">Overall Leave Requests</div>
                 <div class="text-3xl font-semibold text-blue-800">{{ $overallLeaveCount }}</div>
             </div>

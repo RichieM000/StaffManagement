@@ -17,11 +17,9 @@ class Sadmin
     public function handle(Request $request, Closure $next): Response
     {
 
-        if(Auth::user()->usertype != 'systemadmin'){
+        if (Auth::user()->usertype != 'systemadmin') {
             return redirect('admin/dashboard');
-            return redirect('dashboard');
         }
-        
         return $next($request);
     }
 }

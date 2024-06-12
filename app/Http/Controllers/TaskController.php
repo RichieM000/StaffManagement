@@ -197,7 +197,7 @@ public function edit(Task $task)
 
     
     // Assuming you have a way to retrieve staff members with their job roles
-    $staffWithRoles = User::where('usertype', '!=', 'admin')->get();
+    $staffWithRoles = User::whereNotIn('usertype', ['admin', 'systemadmin'])->get();
    
     // Filter staff members based on job roles (e.g., 'Kapitan', 'Secretary', etc.)
     $kapitans = $staffWithRoles->where('jobrole', 'Chairman');
@@ -262,6 +262,12 @@ public function update(Request $request, $id)
 } 
 }
 
+public function deleteMultipleRowstask(Request $request)
+{
+    $ids = $request->input('ids');
+    Task::whereIn('id', explode(",",$ids))->delete();
+    return response()->json(['status' => true, 'delete' => 'Selected Item Deleted']);
+}
 
 public function destroy($task)
 {

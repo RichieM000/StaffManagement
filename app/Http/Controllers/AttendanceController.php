@@ -11,9 +11,25 @@ class AttendanceController extends Controller
 {
     public function index(){
 
-        $attendances = Attendance::all();
+        $attendances = Attendance::latest()->get();
         return view('admin/attendance', compact('attendances'));
     }
+
+    public function destroyattendance($id){
+
+        $attendance = Attendance::findOrFail($id);
+        $attendance ->delete();
+    
+        return redirect()->route('admin-attendance')->with('delete', 'Attendance Details Deleted');
+    
+       }
+       public function deleteMultipleRows(Request $request)
+       {
+           $ids = $request->input('ids');
+           Attendance::whereIn('id', explode(",",$ids))->delete();
+           return response()->json(['status' => true, 'delete' => 'Selected Item Deleted']);
+       }
+     
 
     public function index2(Request $request)
     {

@@ -1,6 +1,36 @@
 <!-- resources/views/components/sidebar.blade.php -->
+<div class="md:hidden bg-gray-800 flex flex-col min-h-screen p-4 transition duration-300 ease-in-out">
+    <button id="sidebarToggle" class="text-white p-2 rounded"><i class="ri-align-justify"></i></button>
+    <button id="closebarToggle" class="text-white p-2 rounded hidden"><i class="ri-close-large-fill"></i></button>
+</div>
+<script>
+    // const openBtn = document.getElementById('sidebarToggle');
+    // const closeBtn = document.getElementById('closebarToggle');
+    // const sideBar = document.getElementById('sidebar');
+    
+    // openBtn.addEventListener('click', function(){
+    //     sideBar.classList.toggle('hidden');
+        
+    // });
+    document.getElementById('sidebarToggle').addEventListener('click', function() {
+        var sidebar = document.getElementById('sidebar');
+        sidebar.classList.toggle('hidden');
+        var closeBtn = document.getElementById('closebarToggle');
+        closeBtn.classList.toggle('hidden');
+        var openBtn = document.getElementById('sidebarToggle');
+        openBtn.classList.toggle('hidden');
+    });
 
-<aside class="bg-gray-800 mr-8 text-white max-w-sm flex flex-col flex-grow min-h-screen">
+    document.getElementById('closebarToggle').addEventListener('click', function() {
+        var sidebar = document.getElementById('sidebar');
+        sidebar.classList.toggle('hidden');
+        var closeBtn = document.getElementById('closebarToggle');
+        closeBtn.classList.toggle('hidden');
+        var openBtn = document.getElementById('sidebarToggle');
+        openBtn.classList.toggle('hidden');
+    });
+</script>
+<aside id="sidebar" class="bg-gray-800 transition duration-300 ease-in-out mr-8 text-white max-w-sm flex flex-col flex-grow min-h-screen hidden md:block z-10">
     
     {{-- Logo/Header --}}
     <div class="p-4">

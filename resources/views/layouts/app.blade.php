@@ -2,9 +2,9 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
         <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="csrf-token" content="{{ csrf_token() }}">
-        <meta name="csrf-token" content="{{ csrf_token() }}">
+        
         <title>Staff Mangement Solutions For Brgy.8</title>
 
         
@@ -67,9 +67,17 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="font-ecom antialiased">
+    <style>
+      body, html {
+          margin: 0;
+          padding: 0;
+          height: 100%;
+          width: 100%;
+      }
+  </style>
+    <body class="font-ecom antialiased m-0 p-0 h-full w-full">
       
-        <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
+        <div class="min-h-screen w-screen bg-gray-200 dark:bg-gray-900 overflow-hidden">
          
             @include('layouts.navigation')
             
@@ -82,9 +90,9 @@
                 </header>
                 
             @endif
-            <div class="bg-red-600 bg-cover"></div>
+            <div class="w-full"></div>
             <!-- Page Content -->
-            <main class="">
+            <main class="w-full">
                 {{ $slot }}
                 
             </main>

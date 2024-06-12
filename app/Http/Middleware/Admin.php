@@ -19,11 +19,8 @@ class Admin
 
       
         
-        if(!Auth::guard('admin')->check()){
-            if(!Auth::guard('admin')->user()){
-                return redirect('dashboard');
-                return redirect('systemadmin/dashboard');
-            }
+        if (!Auth::guard('admin')->check()) {
+            return redirect('dashboard');
         }
         return $next($request);
     }

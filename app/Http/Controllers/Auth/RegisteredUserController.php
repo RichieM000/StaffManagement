@@ -42,7 +42,7 @@ class RegisteredUserController extends Controller
             'committee_roles' => 'array',
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'phone' => 'nullable|string|max:11|min:11',
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'password' => ['required', 'confirmed', 'min:6', Rules\Password::defaults()],
             'day_of_week' => 'required|string|max:255', // Add validation for day_of_week
             'start_time' => 'required|string|max:8', // Add validation for start_time (adjust as needed)
             'end_time' => 'required|string|max:8',

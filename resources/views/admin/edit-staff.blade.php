@@ -12,7 +12,7 @@
         <div class="container m-auto md:w-3/4 lg:w-5/12 py-6">
             <div class="flex justify-between items-center">
             <h1 class="text-2xl font-semibold mb-4">Update Staff</h1>
-            <a href="/admin/staff" class="bg-button px-6 py-1 text-white rounded-md hover:bg-hover">Back</a>
+            <a href="/admin/staff" class="bg-green-500 px-6 py-1 text-white rounded-md hover:bg-green-700">Back</a>
         </div>
             <div class="bg-white shadow-md rounded-lg p-6 mx-auto">
                 <form action="/update/staff/{{$user->id}}" method="POST" class="grid grid-cols-2 gap-3">
@@ -56,15 +56,15 @@
             <x-input-label for="jobrole" :value="__('Job Postion')" />
             <select name="jobrole" id="jobrole" value="{{ $user->jobrole }}" class="mt-1 p-2 borderoverflow-y-auto border-gray-300 rounded-md w-full">
                 <option>--Select Position--</option>
-                <option value="Chairman">Chairman</option>
-                <option value="Secretary">Secretary</option>
-                <option value="Treasurer">Treasurer</option>
-                <option value="Kagawad">Kagawad</option>
-                <option value="Tanod">Tanod</option>
-                <option value="SK Chairman">SK Chairman</option>
-                <option value="SK">SK</option>
-                <option value="Clerk">Clerk</option>
-                <option value="BHW">Barangay Health Workers</option>
+                <option value="Chairman" {{$user->jobrole == 'Chairman' ? 'selected' : ''}}>Chairman</option>
+                <option value="Secretary" {{$user->jobrole == 'Secretary' ? 'selected' : ''}}>Secretary</option>
+                <option value="Treasurer" {{$user->jobrole == 'Treasurer' ? 'selected' : ''}}>Treasurer</option>
+                <option value="Kagawad" {{$user->jobrole == 'Kagawad' ? 'selected' : ''}}>Kagawad</option>
+                <option value="Tanod" {{$user->jobrole == 'Tanod' ? 'selected' : ''}}>Tanod</option>
+                <option value="SK Chairman" {{$user->jobrole == 'SK Chairman' ? 'selected' : ''}}>SK Chairman</option>
+                <option value="SK" {{$user->jobrole == 'SK' ? 'selected' : ''}}>SK</option>
+                <option value="Clerk" {{$user->jobrole == 'Clerk' ? 'selected' : ''}}>Clerk</option>
+                <option value="BHW" {{$user->jobrole == 'BHW' ? 'selected' : ''}}>Barangay Health Workers</option>
                 
             </select>
             <x-input-error :messages="$errors->get('phone')" class="mt-2" />
@@ -156,6 +156,32 @@
             <x-input-error :messages="$errors->get('committee_roles')" class="mt-2" />
         </div>
                     <!-- Other staff fields (age, address, email, phone) can be added similarly -->
+
+
+
+                    <div class="mb-4">
+                        <x-input-label for="password" :value="__('Password')" />
+            
+                        <x-text-input id="password" class="block mt-1 w-full"
+                                        type="password"
+                                        name="password"
+                                        required autocomplete="new-password"
+                                        placeholder="update password if needed..." />
+                                        <span class="font-light text-xs mt-2 text-green-500">Password must contain 6 or more characters</span>
+                        <x-input-error :messages="$errors->get('password')" class="mt-2" />
+                    </div>
+            
+                    <!-- Confirm Password -->
+                    <div class="mb-4">
+                        <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
+            
+                        <x-text-input id="password_confirmation" class="block mt-1 w-full"
+                                        type="password"
+                                        name="password_confirmation" required autocomplete="new-password"
+                                        placeholder="update password if needed.." />
+            
+                        <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
+                    </div>
     
                     <!-- Work Schedule Inputs -->
                     <div class="mb-4">
@@ -182,7 +208,7 @@
                     </div>
     
                     <div class="col-span-2 m-auto">
-                        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md">Done</button>
+                        <button type="submit" class="bg-green-500 hover:bg-green-700 text-white px-4 py-2 rounded-md">Done</button>
                     </div>
                 </form>
             </div>

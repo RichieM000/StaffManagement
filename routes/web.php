@@ -18,10 +18,10 @@ Route::get('/', function () {
     return view('auth.login');
 });
 
-Route::get('/dashboard', [UserController::class, 'index'])->middleware(['auth', 'verified', 'user'])->name('userdashboard');
+
 
 Route::middleware('auth', 'verified', 'user')->group(function () {
-
+    Route::get('/dashboard', [UserController::class, 'index'])->name('userdashboard');
     Route::get('/task', [TaskController::class, 'userTask'])->name('user.task');
     Route::post('/task/{id}/accept', [TaskController::class, 'accept'])->name('task.accept');
     Route::post('/task/reject/{id}', [TaskController::class, 'reject'])->name('task.reject');
@@ -91,6 +91,7 @@ Route::middleware('auth:admin', 'admin')->group(function (){
     Route::get('/edit/staff/{user}', [StaffController::class, 'edit'])->name('admin.edit-staff');
     Route::put('/update/staff/{user}', [StaffController::class, 'update'])->name('editstaff');
     Route::delete('/delete/staff/{user}', [StaffController::class, 'destroy'])->name('admin.delete-staff');
+    Route::delete('delete-multiple-rows', [StaffController::class, 'deleteMultipleRowsstaff'])->name('admin-deleterows-staff');
 
 
     Route::get('admin/teams', [TeamController::class, 'index'])->name('admin.teams');
@@ -101,6 +102,7 @@ Route::post('/tasks', [TaskController::class, 'store'])->name('tasks-store');
 Route::get('/tasks/{task}/edit', [TaskController::class, 'edit'])->name('tasks-edit');
 Route::put('/tasks/{id}', [TaskController::class, 'update'])->name('tasks-update');
 Route::delete('/tasks/{task}/delete', [TaskController::class, 'destroy'])->name('tasks-destroy');
+Route::delete('admin-delete-task', [TaskController::class, 'deleteMultipleRowstask']);
 
 Route::get('admin/tasks/pending', [TaskController::class, 'pendingTasks'])->name('admin.tasks.pending');
 
@@ -109,9 +111,12 @@ Route::get('admin/leave', [LeaveController::class, 'adminIndex'])->name('admin-l
 Route::put('admin/leave/approve/{id}', [LeaveController::class, 'approveLeaveRequest'])->name('admin-approve');
 Route::put('admin/leave/reject/{id}', [LeaveController::class, 'rejectLeaveRequest'])->name('admin-reject');
 Route::delete('admin/leave/delete/{id}', [LeaveController::class, 'destroy'])->name('admin-delete');
+Route::delete('delete-multiple-rows', [LeaveController::class, 'deleteMultipleRowsleave'])->name('admin-deleterows-leave');
 
 // attendance
 Route::get('admin/attendance', [AttendanceController::class, 'index'])->name('admin-attendance');
+Route::delete('/admin/attendancedelete/{id}', [AttendanceController::class, 'destroyattendance'])->name('admin-deleteattendance');
+Route::delete('delete-multiple-rows', [AttendanceController::class, 'deleteMultipleRows'])->name('deleterows');
 Route::get('admin/attendance2', [AttendanceController::class, 'index2'])->name('admin-attendance2');
 
 // performance evaluation
@@ -124,6 +129,8 @@ Route::post('/evaluation/store', [EvaluationController::class, 'store'])->name('
 Route::get('/admin/edit/{evaluation}', [EvaluationController::class, 'editevaluation'])->name('admin-editevaluation');
 Route::put('/admin/update{evaluation}', [EvaluationController::class, 'updateevaluation'])->name('admin-updateevaluation');
 Route::delete('/admin/destroy{evaluation}', [EvaluationController::class, 'destroyevaluation'])->name('admin-deleteevaluation');
+Route::delete('delete-multiple-rows', [EvaluationController::class, 'deleteMultipleRowseval'])->name('admin-deleterows-staff');
+
 
 
 });
@@ -157,31 +164,37 @@ Route::middleware('auth','systemadmin')->group(function () {
     Route::get('/edit-users/{user}', [SadminController::class, 'edituser'])->name('sadmin_editusers');
     Route::put('/update-users/{user}', [SadminController::class, 'updateuser'])->name('sadmin_updateusers');
     Route::delete('/delete-users/{user}', [SadminController::class, 'destroyuser'])->name('sadmin_deleteusers');
+    Route::delete('delete-multiple-rows', [SadminController::class, 'deleteMultipleRowsstaff'])->name('deleterows-staff');
 
     Route::get('systemadmin/staffs', [SadminController::class, 'showstaffs'])->name('sadmin_showstaffs');
+// manage tasks
 
-    // manage tasks
+
     Route::get('systemadmin/tasks', [SadminController::class, 'showtasks'])->name('sadmin_showtasks');
     Route::get('systemadmin/createtasks', [SadminController::class, 'createtasks'])->name('sadmin_createtasks');
     Route::post('systemadmin/storetasks', [SadminController::class, 'storetasks'])->name('sadmin_storetasks');
     Route::get('/edit-tasks/{task}', [SadminController::class, 'edittasks'])->name('sadmin_edittasks');
     Route::put('/update-tasks/{id}', [SadminController::class, 'updatetasks'])->name('sadmin_updatetasks');
     Route::delete('/delete-tasks/{task}', [SadminController::class, 'destroytasks'])->name('sadmin_deletetasks');
+    Route::delete('delete-task', [SadminController::class, 'deleteMultipleRowstask']);
 
+// attendance
     Route::get('systemadmin/attendance-time', [SadminController::class, 'showattendance'])->name('sadmin_showattendance');
     Route::delete('/systemadmin/attendancedelete/{id}', [SadminController::class, 'destroyattendance'])->name('sadmin_deleteattendance');
+    Route::delete('delete-multiple-rows', [SadminController::class, 'deleteMultipleRows'])->name('deleterows');
 
     Route::get('systemadmin/attendance-sheet', [SadminController::class, 'showattendancesheet'])->name('sadmin_showattendancesheet');
-
+// leave
     Route::get('systemadmin/leave', [SadminController::class, 'showleave'])->name('sadmin_showleave');
     Route::put('systemadmin/leave/approve/{id}', [SadminController::class, 'approveleave'])->name('sadmin_approveleave');
     Route::put('systemadmin/leave/reject/{id}', [SadminController::class, 'rejectleave'])->name('sadmin_rejectleave');
     Route::delete('/systemadmin/leave/delete/{id}', [SadminController::class, 'destroyleave'])->name('sadmin_deleteleave');
+    Route::delete('delete-multiple-rows', [SadminController::class, 'deleteMultipleRowsleave'])->name('deleterows-leave');
 
     // // evaluation
     Route::get('/systemadmin/evaluation/{id}', [SadminController::class, 'getEvaluationData'])->name('get-evaluation-data');
 
-
+    Route::delete('delete-multiple-rows', [SadminController::class, 'deleteMultipleRowseval'])->name('deleterows-evaluation');
     Route::get('/systemadmin/get-tasks/{userId}', [SadminController::class, 'gettask'])->name('get-tasks');
     Route::get('systemadmin/evaluation', [SadminController::class, 'index'])->name('sadmin_evaluation');
     Route::get('/evaluation/systemadmin/add', [SadminController::class, 'addevaluation'])->name('sadmin_addevaluation');
