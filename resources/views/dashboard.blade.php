@@ -17,16 +17,44 @@
                     </div>
                 </div>
             </div> --}}
+            
+           
             @if($pendingTasksCount > 0)
-            <div id="successMessage" class="bg-green-100 transition duration-300 ease-in-out border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+            <div id="successMessage" class="" role="alert">
                 <div class="">
                     <span><i class="ri-notification-4-fill"></i></span>
-                <strong class="font-bold">Pending Task!</strong>
+                <strong class="text-green-500 font-bold">Pending Task!</strong>
                 </div>
                 <span class="absolute top-0 bottom-0 right-0 px-4 py-3" onclick="document.getElementById('successMessage').style.display = 'none';" role="button"><i class="ri-close-fill"></i></span>
             
                 {{-- <span class="block sm:inline">{{ session('success') }}</span> --}}
             </div>
+           
+            <script>
+                // Automatically hide the success message after 5 seconds (5000 milliseconds)
+                setTimeout(function() {
+                    document.getElementById('successMessage').classList.add('hidden');
+                }, 3000); // Adjust the timeout value as needed (in milliseconds)
+            </script>
+            @endif
+
+
+            @if($performancecount > 0)
+            <div id="Message1" class="" role="alert">
+                <div class="">
+                    <span><i class="ri-notification-4-fill"></i></span>
+                <strong class="text-green-500 font-bold">You receive an evaluation!</strong>
+                </div>
+                <span class="absolute top-0 bottom-0 right-0 px-4 py-3" onclick="document.getElementById('successMessage').style.display = 'none';" role="button"><i class="ri-close-fill"></i></span>
+            
+                {{-- <span class="block sm:inline">{{ session('success') }}</span> --}}
+            </div>
+            <script>
+                // Automatically hide the success message after 5 seconds (5000 milliseconds)
+                setTimeout(function() {
+                    document.getElementById('Message1').classList.add('hidden');
+                }, 3000); // Adjust the timeout value as needed (in milliseconds)
+            </script>
             @endif
         
             <div class="mx-auto bg-white mt-12 grid grid-cols-3 gap-2 w-11/12 items-start px-4 py-8">
@@ -86,13 +114,14 @@
                     </button>
                 @endif
 
+
                    
                 </div>
                 <a class="" href=" {{route('user.evaluation') }}">
                 <div class="mt-12 transition duration-300 ease-in-out hover:bg-gray-200 p-4 rounded-lg">
                     <h1 class="mb-2 font-semibold">Performance Evaluation:</h1>
 
-                    <div class="bg-blue-500 text-white p-4 rounded-md {{ $performancecount > 0? 'animate-pulse scale-105 hover:scale-110' : '' }}">
+                    <div class="bg-blue-500 text-white p-4 rounded-md transition duration-300 ease-in-out {{ $performancecount > 0? 'animate-pulse scale-105 hover:scale-110' : '' }}">
                     <div class="text-3xl font-semibold">{{ $performancecount }}</div>
                     <div class="text-xl font-bold">Evaluations</div>
                 </div>
@@ -111,7 +140,7 @@
                      <div class="text-xl font-bold text-gray-900">Overall Tasks</div>
                 </div>
 
-                <div class="bg-gray-500 rounded p-1.5 {{ $pendingTasksCount > 0? 'animate-pulse scale-105 hover:scale-110' : '' }}">
+                <div class="bg-gray-500 rounded p-1.5 transition duration-300 ease-in-out {{ $pendingTasksCount > 0? 'animate-pulse scale-105 hover:scale-110' : '' }}">
                     <div class="text-3xl font-semibold text-white">{{ $pendingTasksCount }}</div>
                     <div class="text-xl font-base text-white">Pending Tasks</div>
                 </div>
@@ -134,7 +163,7 @@
                 <div class="text-xl font-base text-white">Completed Tasks</div>
             </div>
 
-            <div class ="bg-red-200 rounded p-1.5 col-span-2">
+            <div class ="bg-red-200 rounded p-1.5 col-span-2 transition duration-300 ease-in-out {{ $deadlinecount > 0? 'animate-pulse  hover:scale-110' : '' }}">
                 <div class="text-3xl font-semibold text-red-600">{{ $deadlinecount }}</div>
                 
                 <div class="text-xl font-base text-red-500">Exceeded deadline tasks</div>
@@ -156,13 +185,13 @@
                 <div class="text-xl font-base text-white">Pending Leaves</div>
             </div>
 
-            <div class="bg-blue-500 rounded p-1.5 {{ $approvedleaveCount > 0? 'animate-pulse scale-105 hover:scale-110' : '' }}">
+            <div class="bg-blue-500 rounded p-1.5 transition duration-300 ease-in-out {{ $approvedleaveCount > 0? 'animate-pulse hover:scale-110' : '' }}">
                 <div class="text-3xl font-semibold text-white">{{ $approvedleaveCount }}</div>
                 
                 <div class="text-xl font-base text-white">Approved Leaves</div>
             </div>
 
-            <div class="bg-red-500 rounded p-1.5">
+            <div class="bg-red-500 rounded p-1.5 transition duration-300 ease-in-out {{ $rejectedleaveCount > 0? 'animate-pulse hover:scale-110' : '' }}">
                 <div class="text-3xl font-semibold text-white">{{ $rejectedleaveCount }}</div>
                 
                 <div class="text-xl font-base text-white">Rejected Leaves</div>

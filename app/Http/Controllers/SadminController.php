@@ -62,12 +62,14 @@ class SadminController extends Controller
         //  
         $timeins = Attendance::whereNotNull('clock_in')->count();
         $timeouts = Attendance::whereNotNull('clock_out')->count();
+        $ontime = Attendance::where('status', 'late')->count();
+        $late = Attendance::where('status', 'on-time')->count();
          
     
 
        
 
-    return view('sadmin/dashboard', compact('overallUsersCount', 'timeins', 'timeouts', 'performancecount', 'deadline', 'adminsCount', 'pendingTasksCount',
+    return view('sadmin/dashboard', compact('overallUsersCount', 'ontime', 'late', 'timeins', 'timeouts', 'performancecount', 'deadline', 'adminsCount', 'pendingTasksCount',
      'acceptedTasksCount', 'completedTasksCount', 'approveLeave', 'pendingLeave', 'rejectedLeave',
       'overallLeaveCount', 'usersByJobrole', 'overallTasksCount', 'successMessage', 'rejectedTasksCount'));
     }
@@ -75,7 +77,7 @@ class SadminController extends Controller
     public function showlogs(){
 
          // Fetch login history for admins and users
-    $adminLoginHistory = LoginHistory::with('user')->whereHas('user', function ($query) {
+    $adminLoginHistory = LoginHistory::with('admin')->whereHas('admin', function ($query) {
         $query->where('usertype', 'admin');
     })->latest()->paginate(10);
 
@@ -291,6 +293,7 @@ public function updateadmin(Request $request, $id)
 public function edituser($id)
 {
     $user = User::with('workSchedules')->findOrFail($id);
+    
     return view('sadmin.edit-users', compact('user'));
 }
 
@@ -347,6 +350,14 @@ public function updateuser(Request $request, User $user): RedirectResponse
         return redirect()->back()->with('error', 'Error updating user: ' . $e->getMessage());
     }
 }
+
+public function deleteMultipleRowsstaff(Request $request)
+    {
+        $ids = $request->input('ids');
+        User::whereIn('id', explode(",",$ids))->delete();
+        return response()->json(['status' => true, 'delete' => 'Selected Item Deleted']);
+    }
+
 
 
 public function destroyuser(User $user)
@@ -569,6 +580,13 @@ public function updatetasks(Request $request, $id)
     } 
 }
 
+public function deleteMultipleRowstask(Request $request)
+{
+    $ids = $request->input('ids');
+    Task::whereIn('id', explode(",",$ids))->delete();
+    return response()->json(['status' => true, 'delete' => 'Selected Item Deleted']);
+}
+
 public function destroytasks($task)
 {
     // Detach the task from all associated staff members
@@ -623,6 +641,13 @@ public function destroytasks($task)
 
     return redirect()->route('sadmin_showattendance')->with('delete', 'Attendance Details Deleted');
 
+   }
+
+   public function deleteMultipleRows(Request $request)
+   {
+       $ids = $request->input('ids');
+       Attendance::whereIn('id', explode(",",$ids))->delete();
+       return response()->json(['status' => true, 'delete' => 'Selected Item Deleted']);
    }
 
    public function showattendancesheet(Request $request)
@@ -681,45 +706,20 @@ public function showleave(Request $request){
 
     $admin = auth()->user()->usertype === 'systemadmin';
 
-    $orderBy = $request->input('order_by', 'default');
-     // Default order is ascending
-    $searchQuery = $request->input('search');
+    // $orderBy = $request->input('order_by', 'default');
+    //  // Default order is ascending
+    // $searchQuery = $request->input('search');
 
 // Perform the search query
-$leaveRequests = LeaveRequest::with('user:id,jobrole,fname')->get();
-$query = LeaveRequest::query();
-$query->with('user:id,fname,jobrole'); // Eager load user details
-if ($searchQuery) {
-    $query->where(function ($q) use ($searchQuery) {
-        $q->whereHas('user', function ($query) use ($searchQuery) {
-            $query->where('fname', 'like', "%{$searchQuery}%")
-            ->orWhere('jobrole', 'like', "%{$searchQuery}%");
-        })
-        ->orWhere('leave_type', 'like', "%{$searchQuery}%")
-        ->orWhere('reason', 'like', "%{$searchQuery}%")
-        ;
-    });
-}
+$leaveRequests = LeaveRequest::with('user')->get();
 
-// Check if the orderBy value is default and apply the default order
-if ($orderBy === 'default') {
-    $leaveRequests = $query->latest()->paginate(10)->withQueryString();
-} else {
-    $leaveRequests = $query->orderBy('leave_type', $orderBy)->paginate(10)->withQueryString();
-}
-
-if ($searchQuery && $leaveRequests->isEmpty()) {
-    $noItemsMessage = 'No items found!!';
-} else {
-    $noItemsMessage = null;
-}
    
     // $leaveRequests = LeaveRequest::with('user:id,jobrole,fname')->get();
     $pendingRequests = LeaveRequest::where('status', 'pending')->get();
     $approvedRequests = LeaveRequest::where('status', 'approved')->get();
     $rejectedRequests = LeaveRequest::where('status', 'rejected')->get();
 
-    return view('sadmin/leave', compact('admin', 'orderBy', 'leaveRequests', 'pendingRequests','approvedRequests','rejectedRequests'));
+    return view('sadmin/leave', compact('admin', 'leaveRequests', 'pendingRequests','approvedRequests','rejectedRequests'));
 }
 
 public function approveleave(Request $request, $id)
@@ -747,6 +747,13 @@ public function approveleave(Request $request, $id)
         return redirect()->route('sadmin_showleave', compact('leaveRequest'))->with('success', 'Leave Rejected');
     }
 
+    public function deleteMultipleRowsleave(Request $request)
+    {
+        $ids = $request->input('ids');
+        LeaveRequest::whereIn('id', explode(",",$ids))->delete();
+        return response()->json(['status' => true, 'delete' => 'Selected Item Deleted']);
+    }
+
     public function destroyleave($id){
 
         $leaveRequest = LeaveRequest::findOrFail($id);
@@ -761,6 +768,13 @@ public function approveleave(Request $request, $id)
         $evaluations = Evaluation::with(['user', 'task'])->latest()->get();
         
         return view('sadmin/evaluation', compact('evaluations'));
+    }
+
+    public function deleteMultipleRowseval(Request $request)
+    {
+        $ids = $request->input('ids');
+        Evaluation::whereIn('id', explode(",",$ids))->delete();
+        return response()->json(['status' => true, 'delete' => 'Selected Item Deleted']);
     }
 
     public function addevaluation(Request $request){
@@ -884,6 +898,9 @@ public function approveleave(Request $request, $id)
             'date' => \Carbon\Carbon::parse($evaluation->created_at)->format('F j, Y')
         ]);
     }
+
+
+   
 
 
     public function destroyevaluation($evaluation){

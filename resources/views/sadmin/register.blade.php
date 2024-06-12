@@ -181,7 +181,7 @@
                             type="password"
                             name="password"
                             required autocomplete="new-password" />
-
+            <span class="font-light text-xs mt-2 text-green-500">Password must contain 6 or more character</span>
             <x-input-error :messages="$errors->get('password')" class="mt-2" />
         </div>
 

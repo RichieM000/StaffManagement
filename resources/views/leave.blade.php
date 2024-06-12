@@ -88,8 +88,8 @@
                             {{-- <div class="text-gray-700">{{ $leaveRequest->reason }}</div> --}}
                             <div class="text-sm text-gray-600">Job Role: {{ $leaveRequest->user->jobrole }}</div>
                             {{-- <div class="text-sm text-gray-600">Committee On: {{ $task->kagawad_committee_on }}</div> --}}
-                            <div class="text-sm text-gray-600">Start Date: {{ \Carbon\Carbon::parse($leaveRequest->start_date)->format('Y-m-d') }}</div>
-                            <div class="text-sm text-gray-600">End Date: {{ \Carbon\Carbon::parse($leaveRequest->end_date)->format('Y-m-d') }}</div>
+                            <div class="text-sm text-gray-600">Start Date: {{ \Carbon\Carbon::parse($leaveRequest->start_date)->format('F j, Y') }}</div>
+                            <div class="text-sm text-gray-600">End Date: {{ \Carbon\Carbon::parse($leaveRequest->end_date)->format('F j, Y') }}</div>
                         </div>
                         <div class="mt-4 grid grid-cols-1 items-center">
                             @if($leaveRequest->status === 'approved')

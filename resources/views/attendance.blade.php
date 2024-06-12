@@ -11,7 +11,7 @@
 
 
 
-        <div class="flex-1 p-4">
+        <div class="w-full overflow-x-auto flex-1 p-4">
 
 
             @if(session('success'))
@@ -46,18 +46,19 @@
 
 
 
-        <div class="bg-white transition duration-300 ease-in-out shadow-md mt-4 rounded-lg overflow-x-auto">
-            <div class="overflow-x-auto w-full p-4">
+        <div class="bg-white transition duration-300 ease-in-out shadow-md mt-4 rounded-lg max-w-full overflow-x-auto">
+            <div class="w-full p-4">
                 <table class="responsive border-x-2" id="Table">
                     <!-- Table headers -->
                     <thead class="bg-gray-800 text-white">
                         <tr class="uppercase text-sm font-medium leading-normal">
                             <!-- Existing headers -->
                             <th style="text-align: left" class="px-4 py-2 whitespace-nowrap">#</th>
+                            <th style="text-align: left">Date</th>
                             <th class="px-4 py-2 whitespace-nowrap">Clock In</th>
                             <th class="px-4 py-2 whitespace-nowrap">Clock Out</th>
-                            <th style="text-align: left">Date</th>
-                            <th style="text-align: left">Action</th>
+                            
+                            {{-- <th style="text-align: left">Action</th> --}}
                            
                         </tr>
                     </thead>
@@ -66,21 +67,22 @@
                         @foreach($attendances as $attendance)
                         <tr class="border-b border-gray-200 transition duration-300 ease-in-out text-center hover:bg-gray-100">
                             <td style="text-align: left">{{ $counter++ }}.</td>
+                            <td style="text-align: left">{{ \Carbon\Carbon::parse($attendance->date)->format('F j, Y') }}</td>
                             <td style="text-align: left">{{ \Carbon\Carbon::parse($attendance->clock_in)->format('h:i A') }}</td>
                             <td style="text-align: left">
                                 @if($attendance->clock_out)
                                     {{ \Carbon\Carbon::parse($attendance->clock_out)->format('h:i A') }}
                                 @endif
                             </td>
-                            <td style="text-align: left">{{ $attendance->date }}</td>
+                            
 
-                            <td>
+                            {{-- <td>
                                 <form action="/timesheet/delete{{$attendance->id}}" method="POST">
                                    @csrf
                                    @method('DELETE')
                                    <button type="submit" onclick="return confirm('Are you sure you want to delete this task assignment?')" class="text-red-500 text-xl hover:text-red-700"><i class="ri-delete-bin-fill"></i></button>
                                 </form>
-                            </td>
+                            </td> --}}
                         </tr>
                         @endforeach
                      

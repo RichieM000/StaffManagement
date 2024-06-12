@@ -9,9 +9,10 @@
     <div class="flex">
         <x-sidebar /> <!-- Include the sidebar component -->
 
-        <div class="flex-1 p-4">
-            <div class="max-w-full mx-auto sm:px-6 lg:px-8">
+        <div class="w-full overflow-x-auto flex-1 p-4">
+            <div class="w-full mx-auto sm:px-6 lg:px-8">
                 <div class="container mx-auto py-6">
+                    
                     <div class="flex justify-between items-center">
                         <h1 class="text-2xl font-semibold mb-4">Task Management</h1>
                         <a href="{{ route('add-task') }}" class="rounded bg-green-500 p-1.5 text-white hover:bg-green-700"><i class="ri-add-large-fill"></i> Add New</a>
@@ -56,17 +57,18 @@
  --}}
 
         
-                    <div class="bg-white transition duration-300 ease-in-out shadow-md mt-4 rounded-lg overflow-x-auto">
+                    <div class="bg-white transition duration-300 ease-in-out shadow-md mt-4 rounded-lg max-w-full overflow-x-auto">
                        
-                        <div class="overflow-x-auto w-full p-4">
+                        <div class="w-full p-4">
                             <table class="responsive border-x-2" id="taskTable">
                                 <!-- Table headers -->
                                 <thead class="bg-gray-800 text-white">
                                     <tr class="uppercase text-sm font-medium leading-normal">
                                         <!-- Existing headers -->
+                                        <th style="text-align: left"><input type="checkbox" id="checkboxmain"></th>
                                         <th class="px-4 py-2 whitespace-nowrap">#</th>
-                                        <th class="px-4 py-2 whitespace-nowrap">Name</th>
-                                        <th class="px-4 py-2 whitespace-nowrap">Position</th>
+                                        <th class="px-4 py-2 whitespace-nowrap">Staff</th>
+                                        <th class="px-4 py-2 whitespace-nowrap">Job Position</th>
                                         <th class="px-4 py-2 whitespace-nowrap">Task Title</th>
                                         <th class="px-4 py-2 whitespace-nowrap">Description</th>
                                         <th class="px-4 py-2 whitespace-nowrap">Deadline</th>
@@ -92,6 +94,7 @@
                                    @php $counter = 1 @endphp
                                     @foreach ($tasks as $task)
                                     <tr class="border-b border-gray-200 transition duration-300 ease-in-out text-center hover:bg-gray-100">
+                                        <td><input type="checkbox" class="checkbox" data-id="{{$task->id}}"></td>
                                         <td style="text-align: center" class="px-4 py-2">{{ $counter++ }}.</td>
                                         <td class="px-4 py-2 whitespace-nowrap capitalize">{{ $task->assignedTo->fname }}</td>
                                         <td class="px-4 py-2 whitespace-wrap max-w-60">
@@ -168,21 +171,100 @@
                             <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
                             <script src="https://cdn.datatables.net/2.0.6/js/dataTables.js"></script>
                             <script src="https://cdn.datatables.net/buttons/3.0.2/js/dataTables.buttons.js"></script>
-                            {{-- <script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.dataTables.js"></script> --}}
+                            <script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.dataTables.js"></script>
                             <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-                            {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script> --}}
+                            <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
                             <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
                             <script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.html5.min.js"></script>
                             <script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.print.min.js"></script>
+                            <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+                            <script type="text/javascript">
+                                $(document).ready(function(){
+                    
+                                    $('#checkboxmain').on('click', function(e){
+                                        if ($(this).is(':checked', true)){
+                                            $(".checkbox").prop('checked', true);
+                                        }else{
+                                            $(".checkbox").prop('checked', false)
+                                        }
+                                    });
+                    
+                                    $('.checkbox').on('click', function(){
+                                        if ($('.checkbox:checked').length == $('.checkbox').length){
+                                            $('#checkboxmain').prop('checked', true);
+                                        }else{
+                                            $('#checkboxmain').prop('checked', false);
+                                        }
+                                    });
+                    
+                                    // $('.deleteselect').on('click', function(){
+                                    //     var tableIdArr = [];
+                                    //     $(".checkbox:checked").each(function(){
+                                    //         tableIdArr.push($(this).attr('data-id'))
+                                    //     });
+                                    //     if(tableIdArr.length <= 0){
+                                    //         alert("Choose atleast one item to delete");
+                                            
+                                    //     }
+                                    // });
+                    
+                                });
+                            </script>
                             <script>
                                 new DataTable('#taskTable', {
                                     responsive: true,
-                                            layout: {
-                                                topStart: {
-                                                    buttons: ['copy', 'csv', 'excel', 'print']
-                                                }
-                                            }
-                                        });
+                    
+                                    columnDefs: [
+                                            { targets: 0, orderable: false } // targets: 0 means the first column
+                                        ],
+                                   
+                                    layout: {
+                                        topStart: {
+                                            buttons: ['copy', 'csv', 'excel', 'print',  {
+                                                    text: 'Selected Delete',
+                                                    className: 'deleteselect',
+                                                  action: function (e, dt, node, config) {
+                                                        var tableIdArr = [];
+                                                        $(".checkbox:checked").each(function(){
+                                                            tableIdArr.push($(this).attr('data-id'));
+                                                        });
+                                                        if(tableIdArr.length <= 0){
+                                                         alert("Choose at least one item to delete");
+                                                            
+                                                        } else{
+                                                            if(confirm("Are you sure you want to delete?")){
+                                                              var rowId = tableIdArr.join(",");
+                                                                $.ajax({
+                                                                    url: "{{url('admin-delete-task')}}",
+                                                                    type: 'DELETE',
+                                                                    headers: {
+                                                                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                                                    },
+                                                                data: 'ids=' + rowId,
+                                                                    success: function(data){
+                                                                        if(data['status'] == true){
+                                                                            $(".checkbox:checked").each(function(){
+                                                                                $(this).parents("tr").remove();
+                                                                         });
+                                                                            alert(data['delete']);
+                                                                        }else{
+                                                                            alert('error occured');
+                                                                     }
+                                                                    },
+                                                                    error: function(data){
+                                                                        alert(data.responseText);
+                                                                    }
+                                                                });
+                                                            }
+                                                        }
+                                                    }
+                                                }]
+                                        }
+                                    }
+                                });
+                    
+                                
+                               
                             </script>
                         </div>
                     </div>

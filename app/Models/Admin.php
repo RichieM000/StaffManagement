@@ -20,6 +20,7 @@ class Admin extends Authenticatable
     protected $guard = "admin";
     
     protected $fillable = [
+        'id',
         'name',
         'email',
         'password',
@@ -48,4 +49,8 @@ class Admin extends Authenticatable
             'password' => 'hashed',
         ];
     }
+    public function loginHistories()
+{
+    return $this->hasMany(LoginHistory::class);
+}
 }

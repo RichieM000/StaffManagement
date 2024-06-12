@@ -12,7 +12,7 @@
         <div class="container m-auto md:w-3/4 lg:w-5/12 py-6">
             <div class="flex justify-between items-center">
             <h1 class="text-2xl font-semibold mb-4">Add Staff</h1>
-            <a href="{{route('sadmin_showusers')}}" class="bg-button px-6 py-1 text-white rounded-md hover:bg-hover">Back</a>
+            <a href="{{route('sadmin.register')}}" class="bg-green-500 px-6 py-1 text-white rounded-md hover:bg-green-700">Back</a>
         </div>
             <div class="bg-white shadow-md rounded-lg p-6 mx-auto">
                 <form action="{{ route('sadmin_storeusers') }}" method="POST" class="grid grid-cols-2 gap-3">
@@ -60,7 +60,7 @@
                                         name="password"
                                         required autocomplete="new-password"
                                         placeholder="optional.." />
-            
+                                        <span class="font-light text-xs mt-2 text-green-500">Password must contain 6 or more characters</span>
                         <x-input-error :messages="$errors->get('password')" class="mt-2" />
                     </div>
             
@@ -211,7 +211,7 @@
                     </div>
     
                     <div class="col-span-2 m-auto">
-                        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md">Add Staff</button>
+                        <button type="submit" class="bg-green-500 hover:bg-green-700 text-white px-4 py-2 rounded-md">Add Staff</button>
                     </div>
                 </form>
             </div>

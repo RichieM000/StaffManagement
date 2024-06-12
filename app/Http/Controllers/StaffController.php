@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers;
 
-
 use Carbon\Carbon;
+use Rules\Password;
 use App\Models\User;
 use App\Models\Staff;
 use App\Models\LeaveRequest;
 use App\Models\WorkSchedule;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rules;
+use Illuminate\Support\Facades\Hash;
 
 class StaffController extends Controller
 {
@@ -162,6 +164,7 @@ public function update(Request $request, User $user)
         'jobrole' => 'required|string|max:255',
         'email' => 'required|email|unique:staff,email,' . $user->id,
         'phone' => 'nullable|string|max:11|min:11',
+        'password' => ['nullable','confirmed', Rules\Password::defaults()],
         'day_of_week' => 'required|string|max:255',
         'start_time' => 'required|string|max:8',
         'end_time' => 'required|string|max:8',
@@ -173,7 +176,11 @@ public function update(Request $request, User $user)
 
 
     
-    $user->update($request->except('password'));
+    $userData = $request->only(['fname', 'lname', 'age', 'gender', 'address', 'jobrole', 'committee_roles', 'email', 'phone']);
+
+    if ($request->filled('password')) {
+        $userData['password'] = Hash::make($request->password);
+    }
 
     
     // Check if the job role is being updated to "Kagawad" and there are committee roles
@@ -193,7 +200,7 @@ public function update(Request $request, User $user)
         
     }
 
-    $user->save();
+    $user->update($userData);
 
     // Update work schedule entry if needed
     WorkSchedule::where('user_id', $user->id)->update(['day_of_week' => $request->day_of_week, 'start_time' => $request->start_time, 'end_time' => $request->end_time]);
@@ -206,7 +213,12 @@ public function update(Request $request, User $user)
 
 
 
-
+public function deleteMultipleRowsstaff(Request $request)
+{
+    $ids = $request->input('ids');
+    User::whereIn('id', explode(",",$ids))->delete();
+    return response()->json(['status' => true, 'delete' => 'Selected Item Deleted']);
+}
 
 
 public function destroy(User $user)

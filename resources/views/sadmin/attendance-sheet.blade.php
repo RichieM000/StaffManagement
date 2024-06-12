@@ -158,7 +158,7 @@
                                         <tr>
                                             <th style="text-align: left" scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">#</th>
                                             <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Staff</th>
-                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Position</th>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Job Position</th>
                                             <!-- Display dates as table headers -->
                                             @foreach ($dates as $date)
                                             <?php
@@ -214,23 +214,24 @@
                                                     <p class="text-red-500">&#10006;</p>
                                                 @endif
                                                     </div>
-                                                    <div class="h-4 w-4 pl-6 flex items-center justify-center">
-                                                        @if ($attendance && $attendance['clock_in'])
+
+                                                <div class="h-4 w-4 pl-6 flex items-center justify-center">
+                                                    @if ($attendance && $attendance['clock_in'] && $attendance['clock_out'])
                                                         @php
-                                                        $clockInTime = Carbon\Carbon::parse($attendance['clock_in']);
-                                                        
-                                                        $isPM = $clockInTime->format('a') === 'pm';
-                                                    @endphp
-                                                    @if ($isPM)
-                                                        <p class="text-green-500">&#10004;</p>
+                                                            $clockInTime = Carbon\Carbon::parse($attendance['clock_in']);
+                                                            $clockOutTime = Carbon\Carbon::parse($attendance['clock_out']);
+                                                            
+                                                            $isPM = $clockOutTime->format('a') === 'pm';
+                                                            $isBetween1pmAnd7pm = $clockOutTime->hour >= 13 && $clockOutTime->hour <= 19;
+                                                        @endphp
+                                                        @if ($isPM && $isBetween1pmAnd7pm)
+                                                            <p class="text-green-500">&#10004;</p>
+                                                        @else
+                                                            <p class="text-red-500">&#10006;</p>
+                                                        @endif
                                                     @else
                                                         <p class="text-red-500">&#10006;</p>
                                                     @endif
-                                                @else
-                                                    <p class="text-red-500">&#10006;</p>
-                                                @endif
-                                                    </div>
-                                                  
                                                 </div>
                                             </td>
                                         @endforeach

@@ -13,7 +13,7 @@ class WorkSchedule extends Model
 
     protected $table = 'work_schedules';
 
-    protected $fillable = ['staff_id', 'user_id', 'day_of_week', 'start_time', 'end_time'];
+    protected $fillable = [ 'user_id', 'day_of_week', 'start_time', 'end_time'];
 
     public function staff()
     {

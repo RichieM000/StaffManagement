@@ -103,45 +103,18 @@ public function delete($leaveRequest)
 
       
     
-        $leaves = LeaveRequest::all();
-         // Default order is ascending
-        $searchQuery = $request->input('search');
+      
 
     // Perform the search query
-    $leaveRequests = LeaveRequest::with('user:id,jobrole,fname')->get();
-    $query = LeaveRequest::query();
-    $query->with('user:id,fname,jobrole'); // Eager load user details
-    if ($searchQuery) {
-        $query->where(function ($q) use ($searchQuery) {
-            $q->whereHas('user', function ($query) use ($searchQuery) {
-                $query->where('fname', 'like', "%{$searchQuery}%")
-                ->orWhere('jobrole', 'like', "%{$searchQuery}%");
-            })
-            ->orWhere('leave_type', 'like', "%{$searchQuery}%")
-            ->orWhere('reason', 'like', "%{$searchQuery}%")
-            ;
-        });
-    }
-    
-    // Check if the orderBy value is default and apply the default order
-    if ($orderBy === 'default') {
-        $leaveRequests = $query->latest()->paginate(10)->withQueryString();
-    } else {
-         $leaveRequests = $query->orderBy('leave_type', $orderBy)->paginate(10)->withQueryString();
-    }
-
-    if ($searchQuery && $leaveRequests->isEmpty()) {
-        $noItemsMessage = 'No items found!!';
-    } else {
-        $noItemsMessage = null;
-    }
+    $leaveRequests = LeaveRequest::with('user')->get();
+   
        
         // $leaveRequests = LeaveRequest::with('user:id,jobrole,fname')->get();
         $pendingRequests = LeaveRequest::where('status', 'pending')->get();
         $approvedRequests = LeaveRequest::where('status', 'approved')->get();
         $rejectedRequests = LeaveRequest::where('status', 'rejected')->get();
 
-        return view('admin.leave', compact('admin', 'leaves', 'orderBy', 'leaveRequests', 'pendingRequests','approvedRequests','rejectedRequests'));
+        return view('admin.leave', compact('admin', 'leaveRequests', 'pendingRequests','approvedRequests','rejectedRequests'));
     }
 
     public function approveLeaveRequest(Request $request, $id)
@@ -169,6 +142,15 @@ public function delete($leaveRequest)
     
         return redirect()->route('admin-leave', compact('leaveRequest'))->with('success', 'Leave Rejected');
     }
+
+
+    public function deleteMultipleRowsleave(Request $request)
+    {
+        $ids = $request->input('ids');
+        LeaveRequest::whereIn('id', explode(",",$ids))->delete();
+        return response()->json(['status' => true, 'delete' => 'Selected Item Deleted']);
+    }
+
     public function destroy($id){
 
         $leaveRequest = LeaveRequest::findOrFail($id);

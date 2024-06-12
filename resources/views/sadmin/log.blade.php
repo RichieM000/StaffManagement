@@ -69,7 +69,7 @@
                             <tbody class="">
                                 @foreach ($adminLoginHistory as $history)
                                 <tr class="hover:bg-gray-100">
-                                    <td class="py-2 px-4 border border-gray-300">{{ $history->user->fname }}</td>
+                                    <td class="py-2 px-4 border border-gray-300">{{ $history->admin->name }}</td>
                                     <td class="py-2 px-4 border border-gray-300">{{ \Carbon\Carbon::parse($history->login_time)->format('h:i A') }}</td>
                                     <td class="py-2 px-4 border border-gray-300">@if($history->logout_time)
                                         {{ \Carbon\Carbon::parse($history->logout_time)->format('h:i A') }}

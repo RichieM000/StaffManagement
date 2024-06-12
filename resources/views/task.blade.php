@@ -63,7 +63,7 @@
                         <div class="text-gray-700">{{ $task->description }}</div>
                         <div class="text-sm text-gray-600">Job Role: {{ $task->jobrole }}</div>
                         <div class="text-sm text-gray-600">Committee On: {{ $task->assignedTo->kagawad_committee_on }}</div>
-                        <div class="text-sm text-gray-600">Deadline: {{ \Carbon\Carbon::parse($task->deadline)->format('Y-m-d') }}</div>
+                        <div class="text-sm text-gray-600">Deadline: {{ \Carbon\Carbon::parse($task->deadline)->format('F j, Y') }}</div>
                     </div>
                     <div class="mt-4 flex justify-end flex-col items-center">
                        
@@ -75,7 +75,7 @@
                                     @csrf
                                 <div class="flex flex-col text-sm items-center mt-4">
                                     <div>
-                                        <label for="file">Upload File:</label>
+                                        <label for="file">Upload Files If Needed:</label>
                                         <input type="file" id="file" name="file" class="border w-56 rounded-md px-2 py-1">
                                     </div>
                                         <button type="submit" class="bg-green-500 mt-2 hover:bg-green-600 text-white px-3 py-1 rounded-md">Complete</button>

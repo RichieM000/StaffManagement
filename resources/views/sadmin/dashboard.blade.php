@@ -187,7 +187,7 @@
                 <div class="text-xl font-semibold text-red-500">Exceeded Deadline</div>
                 <div class="text-3xl font-semibold text-red-400">{{ $deadline }}</div>
             </div>
-            <div class="bg-green-50 p-4 rounded-lg shadow-md">
+            <div class="bg-green-50 p-4 rounded-lg shadow-md {{ $completedTasksCount > 0? 'animate-pulse hover:scale-110' : '' }}">
                 <div class="text-xl font-semibold text-green-500">Completed Tasks</div>
                 <div class="text-3xl font-semibold text-green-400">{{ $completedTasksCount }}</div>
             </div>
@@ -199,7 +199,7 @@
 <div class="transition duration-300 ease-in-out hover:bg-gray-200 p-2.5 rounded-lg">
         <div class="text-lg font-medium text-gray-900 mb-2 mt-2">Leave Statistics</div>
         <div class="grid grid-cols-2 gap-4">
-            <div class="bg-blue-50 p-4 rounded-lg shadow-md">
+            <div class="bg-blue-50 p-4 rounded-lg shadow-md {{ $overallLeaveCount > 0? 'animate-pulse hover:scale-110' : '' }}">
                 <div class="text-xl font-semibold text-blue-900">Overall Leave Requests</div>
                 <div class="text-3xl font-semibold text-blue-800">{{ $overallLeaveCount }}</div>
             </div>
